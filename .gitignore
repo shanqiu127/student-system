@@ -1,0 +1,6 @@
+target/
+application*
+qodana.yaml
+student-system.iml
+mvnw
+mvnw.cmd

@@ -1,0 +1,44 @@
+package com.example.studentsystem.dto;
+
+import jakarta.validation.constraints.NotBlank;  // 导入NotBlank注解，用于验证字段不能为空（忽略空白字符）
+import jakarta.validation.constraints.Size;     // 导入Size注解，用于验证字段长度
+import jakarta.validation.constraints.Email;   // 导入Email注解，用于验证邮箱格式
+import jakarta.validation.constraints.Past;    // 导入Past注解，用于验证日期必须是过去的日期
+import java.time.LocalDate;                   // 导入LocalDate类，用于处理日期
+
+public class StudentRequestDto {  // 数据传输对象（DTO），用于接收和验证学生请求数据
+    @NotBlank(message = "学号不能为空")
+    @Size(max = 50)  // 验证学号最大长度为50字符
+    private String studentNo;  // 学生学号
+
+    @NotBlank(message = "姓名不能为空")  // 验证姓名不能为空
+    @Size(max = 100)  // 验证姓名最大长度为100字符
+    private String name;  // 学生姓名
+
+    private String gender;  // 学生性别（无验证约束）
+
+    @Past(message = "出生日期必须是过去的日期")  // 验证出生日期必须是过去的日期
+    private LocalDate dob;  // 出生日期
+
+    @Email(message = "邮箱格式不正确")  // 验证邮箱格式
+    private String email;  // 邮箱地址
+
+    private String phone;  // 电话号码（无验证约束）
+    private String address;  // 地址（无验证约束）
+
+    // 以下是所有字段的getter和setter方法，用于访问和修改私有字段
+    public String getStudentNo() { return studentNo; }
+    public void setStudentNo(String studentNo) { this.studentNo = studentNo; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+    public LocalDate getDob() { return dob; }
+    public void setDob(LocalDate dob) { this.dob = dob; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+}
