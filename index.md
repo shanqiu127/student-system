@@ -1,6 +1,6 @@
 # 日志：2025-11-3
 已经完成了软件的安装，配置好了项目：“学生管理系统”
-- 技术栈：Java 17, Spring Boot, Spring Data JPA, MySQL, Maven
+- 技术栈：Java 17, Spring Boot, Spring Data JPA, MySQL, Maven,Spring Security + JWT
 # 项目目录（概览）
 ```
 student-system/

@@ -1,19 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8" />
-    <title>Student System</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <style>
-        body { font-family: Arial, Helvetica, sans-serif; padding: 2rem; }
-        h1 { color: #2c3e50; }
-        p { color: #34495e; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生管理系统</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Student System</h1>
-<p>后端已启动并运行于端口：<strong>8081</strong></p>
-<p>示例 API：<code>/api/students</code>（如果你已实现）</p>
-<p>H2 控制台（若启用）：<a href="/h2-console">/h2-console</a></p>
+<div class="container">
+    <header>
+        <h1>学生管理系统</h1>
+        <button id="add-student-btn" class="btn btn-primary">添加学生</button>
+    </header>
+    <main>
+        <table id="student-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>姓名</th>
+                <th>地址</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 学生数据将由JS动态插入 -->
+            </tbody>
+        </table>
+        <div id="loading" class="loading-spinner"></div>
+    </main>
+</div>
+
+<!-- 添加/编辑学生模态框 -->
+<div id="student-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2 id="modal-title">添加学生</h2>
+        <form id="student-form">
+            <input type="hidden" id="student-id" name="id">
+            <div class="form-group">
+                <label for="student-name">姓名:</label>
+                <input type="text" id="student-name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="student-address">地址:</label>
+                <input type="text" id="student-address" name="address" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" id="save-btn" class="btn btn-primary">保存</button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>

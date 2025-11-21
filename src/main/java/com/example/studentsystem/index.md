@@ -41,7 +41,7 @@ Controller 封装成 ResponseEntity 并返回给客户端（HTTP 200/201 等）�
 
 
 
-# 在wsl运行
+# 在wsl运行后端端口的命令
 java -jar target/student-system-0.0.1-SNAPSHOT.jar \
 
 --spring.datasource.url=jdbc:h2:mem:testdb \
@@ -53,4 +53,4 @@ java -jar target/student-system-0.0.1-SNAPSHOT.jar \
 --spring.h2.console.enabled=true \
 --spring.h2.console.path=/h2-console \
 --server.port=8081
-可以在验证：http://localhost:8080/
+可以在验证：http://localhost:8081/

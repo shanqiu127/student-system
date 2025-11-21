@@ -1,0 +1,10 @@
+body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+.center { width: 320px; margin: 80px auto; }
+.container { padding: 16px; }
+header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+table { width:100%; border-collapse:collapse; }
+table th, table td { border:1px solid #ddd; padding:8px; text-align:left; }
+.card { border:1px solid #ccc; padding:12px; margin-bottom:12px; width: 480px; }
+.error { color: red; }
+input { width:100%; padding:8px; margin-bottom:8px; box-sizing:border-box; }
+button { margin-right:8px; padding:6px 12px; }
