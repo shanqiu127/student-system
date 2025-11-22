@@ -28,7 +28,7 @@ public class User implements UserDetails {
 
     /**
      * 角色集合：
-     * - FetchType.EAGER：每次加载用户时一并加载角色。
+     * - FetchTypeEAGER：每次加载用户时一并加载角色。
      * - @CollectionTable(name = "user_roles")：枚举集合将映射到独立表 user_roles。
      * - @Enumerated(EnumType.STRING)：以枚举名字符串存储 （如 "ROLE_ADMIN"）。
      */

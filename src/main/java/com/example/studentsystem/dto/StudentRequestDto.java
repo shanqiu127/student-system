@@ -2,7 +2,6 @@ package com.example.studentsystem.dto;
 
 import jakarta.validation.constraints.NotBlank;  // 导入NotBlank注解，用于验证字段不能为空（忽略空白字符）
 import jakarta.validation.constraints.Size;     // 导入Size注解，用于验证字段长度
-import jakarta.validation.constraints.Email;   // 导入Email注解，用于验证邮箱格式
 import jakarta.validation.constraints.Past;    // 导入Past注解，用于验证日期必须是过去的日期
 import java.time.LocalDate;                   // 导入LocalDate类，用于处理日期
 
@@ -20,11 +19,19 @@ public class StudentRequestDto {  // 数据传输对象（DTO），用于接收�
     @Past(message = "出生日期必须是过去的日期")  // 验证出生日期必须是过去的日期
     private LocalDate dob;  // 出生日期
 
-    @Email(message = "邮箱格式不正确")  // 验证邮箱格式
-    private String email;  // 邮箱地址
+    // 监护人手机号（11 位，以 1 开头）
+    @jakarta.validation.constraints.Pattern(
+            regexp = "^1\\d{10}$",
+            message = "监护人手机号必须是以1开头的11位数字"
+    )
+    private String phone;  // guardian phone
 
-    private String phone;  // 电话号码（无验证约束）
-    private String address;  // 地址（无验证约束）
+    private String phoneBackup;  // 备用：预留电话
+    private String address;  // 备用：地址
+
+    //班级字段，限制最大长度
+    @Size(max = 100)
+    private String className;  // 班级名称
 
     // 以下是所有字段的getter和setter方法，用于访问和修改私有字段
     public String getStudentNo() { return studentNo; }
@@ -35,10 +42,12 @@ public class StudentRequestDto {  // 数据传输对象（DTO），用于接收�
     public void setGender(String gender) { this.gender = gender; }
     public LocalDate getDob() { return dob; }
     public void setDob(LocalDate dob) { this.dob = dob; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+    public String getPhoneBackup() { return phoneBackup; }
+    public void setPhoneBackup(String phoneBackup) { this.phoneBackup = phoneBackup; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+    public String getClassName() { return className; }
+    public void setClassName(String className) { this.className = className; }
 }

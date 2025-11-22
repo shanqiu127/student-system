@@ -12,9 +12,10 @@ public class StudentResponseDto {
     private String name;
     private String gender;
     private LocalDate dob;
-    private String email;
-    private String phone;
+    private String phone;  // 监护人手机号
+    private String phoneBackup;  // 备用联系电话（如果有）
     private String address;
+    private String className;
 
     // getters & setters
     public Long getId() { return id; }
@@ -27,10 +28,12 @@ public class StudentResponseDto {
     public void setGender(String gender) { this.gender = gender; }
     public LocalDate getDob() { return dob; }
     public void setDob(LocalDate dob) { this.dob = dob; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+    public String getPhoneBackup() { return phoneBackup; }
+    public void setPhoneBackup(String phoneBackup) { this.phoneBackup = phoneBackup; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+    public String getClassName() { return className; }
+    public void setClassName(String className) { this.className = className; }
 }

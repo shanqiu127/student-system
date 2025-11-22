@@ -58,7 +58,8 @@ class StudentControllerTest {
         req.setStudentNo("T100");                 // 唯一学号，对应实体 studentNo
         req.setName("测试用户");                   // 必填 name
         req.setDob(LocalDate.of(2005,7,1));       // @Past 满足过去日期
-        req.setEmail("test@example.com");         // 合法邮箱格式
+        // 监护人手机号（使用 phone 字段，11 位以 1 开头）
+        req.setPhone("13800001111");
 
         String json = objectMapper.writeValueAsString(req); // 序列化为请求体
 

@@ -16,9 +16,13 @@ public class Student {
     private String name;       // 学生姓名
     private String gender;     // 学生性别
     private LocalDate dob;     // 出生日期，使用LocalDate类型（映射为SQL日期）
-    private String email;      // 邮箱地址
-    private String phone;      // 电话号码
-    private String address;    // 地址
+
+    private String phone;      // 监护人手机号
+
+    private String phoneBackup;      // 预留的联系电话（如备用手机），目前暂未使用
+    private String address;    // 地址，目前暂未使用
+
+    private String className;  // 班级
 
     // 以下是所有字段的getter和setter方法，用于访问和修改私有字段
     public Long getId() { return id; }
@@ -31,10 +35,12 @@ public class Student {
     public void setGender(String gender) { this.gender = gender; }
     public LocalDate getDob() { return dob; }
     public void setDob(LocalDate dob) { this.dob = dob; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+    public String getPhoneBackup() { return phoneBackup; }
+    public void setPhoneBackup(String phoneBackup) { this.phoneBackup = phoneBackup; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+    public String getClassName() { return className; }
+    public void setClassName(String className) { this.className = className; }
 }

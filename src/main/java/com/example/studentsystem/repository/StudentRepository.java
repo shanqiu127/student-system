@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface StudentRepository extends JpaRepository<Student, Long> {
     // 精确查询：根据学生编号查找学生
     Optional<Student> findByStudentNo(String studentNo);
-    // 模糊查询（按 name，忽略大小写）
-    Page<Student> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    // 按学号模糊/前缀查询（包含关系）
+    Page<Student> findByStudentNoContaining(String studentNo, Pageable pageable);
 }

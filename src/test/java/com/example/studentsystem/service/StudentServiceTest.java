@@ -1,4 +1,3 @@
-
 package com.example.studentsystem.service;
 
 import com.example.studentsystem.dto.StudentRequestDto;
@@ -45,7 +44,8 @@ class StudentServiceTest {
         sampleRequest.setStudentNo("S100");
         sampleRequest.setName("张三");
         sampleRequest.setDob(LocalDate.of(2005,7,1));
-        sampleRequest.setEmail("test@example.com");
+        // 监护人手机号使用 phone 字段
+        sampleRequest.setPhone("13800001111");
 
         // 再继续构造一个已有的实体对象
         sampleStudent = new Student();
@@ -53,7 +53,8 @@ class StudentServiceTest {
         sampleStudent.setStudentNo("S100");
         sampleStudent.setName("张三");
         sampleStudent.setDob(LocalDate.of(2005,7,1));
-        sampleStudent.setEmail("test@example.com");
+        // 实体中 guardian 手机号同样存放在 phone 字段（映射到 email 列）
+        sampleStudent.setPhone("13800001111");
     }
 
     @Test
@@ -99,13 +100,13 @@ class StudentServiceTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void list_byStudentNo_returnsPageWithOne() {
-        // 按 studentNo 精确查询（list 方法分支一）
-        when(repo.findByStudentNo("S100")).thenReturn(Optional.of(sampleStudent));
-
+        // 使用学号模糊查询（list 方法现在走 findByStudentNoContaining 分支）
         PageRequest pageable = PageRequest.of(0, 10);
-        // 调用 list，传入 studentNo，name 为 null -> 应为精确查询分支
-        Page<StudentResponseDto> result = service.list(pageable, null, "S100");
-        // 验证结果
+        when(repo.findByStudentNoContaining("S100", pageable))
+                .thenReturn(new PageImpl<>(Collections.singletonList(sampleStudent), pageable, 1));
+
+        Page<StudentResponseDto> result = service.list(pageable, "S100");
+
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
         assertEquals(1, result.getContent().size());
@@ -115,11 +116,12 @@ class StudentServiceTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void list_all_returnsPage() {
-        // 场景：无 studentNo 与 name，走默认 repo.findAll(pageable)
-        when(repo.findAll(PageRequest.of(0,10))).thenReturn(new PageImpl<>(Collections.singletonList(sampleStudent)));
-
+        // 场景：无 studentNo，走默认 repo.findAll(pageable)
         PageRequest pageable = PageRequest.of(0, 10);
-        Page<StudentResponseDto> page = service.list(pageable, null, null);
+        when(repo.findAll(pageable))
+                .thenReturn(new PageImpl<>(Collections.singletonList(sampleStudent), pageable, 1));
+
+        Page<StudentResponseDto> page = service.list(pageable, null);
 
         // PageImpl 中总元素数为 1
         assertEquals(1, page.getTotalElements());

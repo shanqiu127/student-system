@@ -17,9 +17,10 @@ public class StudentMapper {
         s.setName(dto.getName());
         s.setGender(dto.getGender());
         s.setDob(dto.getDob());
-        s.setEmail(dto.getEmail());
-        s.setPhone(dto.getPhone());
+        s.setPhone(dto.getPhone());      // guardian phone -> entity phone (mapped to email column)
+        s.setPhoneBackup(dto.getPhoneBackup());
         s.setAddress(dto.getAddress());
+        s.setClassName(dto.getClassName());
         return s;
     }
 
@@ -31,9 +32,10 @@ public class StudentMapper {
         dto.setName(s.getName());
         dto.setGender(s.getGender());
         dto.setDob(s.getDob());
-        dto.setEmail(s.getEmail());
-        dto.setPhone(s.getPhone());
+        dto.setPhone(s.getPhone());          // guardian phone
+        dto.setPhoneBackup(s.getPhoneBackup());
         dto.setAddress(s.getAddress());
+        dto.setClassName(s.getClassName());
         return dto;
     }
 
@@ -43,8 +45,9 @@ public class StudentMapper {
         s.setName(dto.getName());
         s.setGender(dto.getGender());
         s.setDob(dto.getDob());
-        s.setEmail(dto.getEmail());
-        s.setPhone(dto.getPhone());
+        s.setPhone(dto.getPhone());          // guardian phone
+        s.setPhoneBackup(dto.getPhoneBackup());
         s.setAddress(dto.getAddress());
+        s.setClassName(dto.getClassName());
     }
 }

@@ -35,6 +35,15 @@
     - 路径参数：`id` (Long)。
     - 返回：删除成功返回 HTTP 204 No Content；不存在返回 HTTP 404。
     - 说明：Service 的 `delete` 返回 `boolean`，控制器根据其返回值构建响应。
+- 'Post /api/students/{import}'
+    - 描述：批量导入学生记录。
+    - 请求体：`List<StudentRequestDto>`，使用 `@Valid` 校验每个 DTO。
+    - 返回：返回 HTTP 200 与导入后的 `List<StudentResponseDto>`。
+    - 说明：Controller 将请求转给 Service 的 `importStudents` 方法。
+- 'Get /api/students/export'
+    - 描述：导出所有学生记录。
+    - 返回：返回 HTTP 200 与 `List<StudentResponseDto>`。
+    - 说明：Controller 将请求转给 Service 的 `exportStudents` 方法。
 
 ## 请求与响应示例
 

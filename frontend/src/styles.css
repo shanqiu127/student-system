@@ -1,10 +1,376 @@
-body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-.center { width: 320px; margin: 80px auto; }
-.container { padding: 16px; }
-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-table { width:100%; border-collapse:collapse; }
-table th, table td { border:1px solid #ddd; padding:8px; text-align:left; }
-.card { border:1px solid #ccc; padding:12px; margin-bottom:12px; width: 480px; }
-.error { color: red; }
-input { width:100%; padding:8px; margin-bottom:8px; box-sizing:border-box; }
-button { margin-right:8px; padding:6px 12px; }
+/* ===== 全局基础样式 ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Roboto", "Segoe UI", system-ui, sans-serif;
+}
+
+/* 背景：更亮一点的夜空渐变 */
+body {
+    background: radial-gradient(circle at top left, #3b82f6 0, #0f172a 40%, #020617 100%);
+    color: #e5e7eb;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+}
+
+/* 让 React 根元素占满并居中内容 */
+#root {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 全局柔和过渡，让交互看起来更丝滑 */
+* {
+    transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            box-shadow 0.2s ease,
+            transform 0.2s ease,
+            border-color 0.2s ease;
+}
+
+/* 滚动条美化（可选） */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.8);
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #22c55e, #3b82f6);
+    border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #16a34a, #2563eb);
+}
+
+/* ===== 登录页布局 ===== */
+.center {
+    width: 360px;
+    max-width: 92vw;
+    margin: 0 auto;
+    padding: 24px 24px 20px;
+    border-radius: 18px;
+    background: radial-gradient(circle at top left,
+    rgba(15, 23, 42, 0.98),
+    rgba(15, 23, 42, 0.9)
+    );
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    box-shadow:
+            0 24px 60px rgba(15, 23, 42, 0.95),
+            0 0 0 1px rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(18px);
+}
+
+.center h2 {
+    margin: 0 0 16px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #e5e7eb;
+}
+
+.center form {
+    margin-top: 8px;
+}
+
+.center p {
+    font-size: 0.82rem;
+    color: #9ca3af;
+    margin-top: 10px;
+}
+
+/* ===== 容器（学生管理主页面） ===== */
+.container {
+    width: min(1080px, 96vw);
+    margin: 32px auto;
+    padding: 24px 24px 20px;
+    border-radius: 24px;
+    background: radial-gradient(circle at top left,
+    rgba(30, 64, 175, 0.98),
+    rgba(15, 23, 42, 0.96)
+    );
+    border: 1px solid rgba(129, 140, 248, 0.7);
+    box-shadow:
+            0 28px 80px rgba(15, 23, 42, 0.95),
+            0 0 0 1px rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(18px);
+}
+
+/* 头部：标题 + 操作按钮 */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 12px;
+}
+
+header h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #f9fafb;
+    margin: 0;
+}
+
+header > div {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* ===== 表单输入类 ===== */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input:not([type]),
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(96, 165, 250, 0.9);
+    background: rgba(15, 23, 42, 0.95);
+    color: #e5e7eb;
+    font-size: 0.9rem;
+    outline: none;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.8);
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: rgba(191, 219, 254, 0.9);
+}
+
+input:focus,
+textarea:focus {
+    border-color: #60a5fa;
+    box-shadow:
+            0 0 0 1px #60a5fa,
+            0 20px 45px rgba(37, 99, 235, 0.9);
+}
+
+/* ===== 按钮统一样式+动效 ===== */
+button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    background: radial-gradient(circle at top left, #38bdf8 0, #2563eb 30%, #22c55e 100%);
+    color: #f9fafb;
+    outline: none;
+    transform: translateY(0);
+    box-shadow: 0 18px 44px rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+}
+
+/* 发光渐变边框效果 */
+button::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    border: 1px solid rgba(129, 140, 248, 0.9);
+    box-shadow: 0 0 18px rgba(129, 140, 248, 0.9);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+button:hover::before {
+    opacity: 1;
+}
+
+button:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.98);
+}
+
+/* 禁用按钮视觉弱化 */
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* 可选：危险按钮（如果你后面 StudentForm 里有 删除 按钮，可以给它加 class="btn-danger"） */
+.btn-danger {
+    background: linear-gradient(135deg, #f97373, #ef4444);
+    border-color: rgba(239, 68, 68, 0.7);
+}
+.btn-danger:hover::before {
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.9), rgba(239, 68, 68, 0.9));
+}
+
+/* ===== 错误提示 ===== */
+.error {
+    color: #fca5a5;
+    font-size: 0.86rem;
+    background: rgba(127, 29, 29, 0.4);
+    border-radius: 10px;
+    padding: 8px 10px;
+    border: 1px solid rgba(248, 113, 113, 0.6);
+    margin-top: 8px;
+}
+
+/* ===== 表格样式（学生列表） ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    margin-top: 10px;
+    background: rgba(15, 23, 42, 0.98);
+    border-radius: 14px;
+    overflow: hidden;
+    font-size: 0.88rem;
+}
+
+table thead {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.9));
+}
+
+table th,
+table td {
+    padding: 10px 12px;
+    text-align: left;
+}
+
+table th {
+    font-weight: 600;
+    color: #9ca3af;
+    border-bottom: 1px solid rgba(55, 65, 81, 0.85);
+}
+
+table tbody tr {
+    border-bottom: 1px solid rgba(31, 41, 55, 0.85);
+    background: rgba(15, 23, 42, 0.98);
+}
+
+/* 奇偶行稍微不同，增加可读性 */
+table tbody tr:nth-child(odd) {
+    background: rgba(15, 23, 42, 0.94);
+}
+
+/* 悬停行高亮+轻微缩放 */
+table tbody tr:hover {
+    background: rgba(30, 64, 175, 0.5);
+    transform: scale(1.002);
+}
+
+/* 小屏滚动优化 */
+@media (max-width: 768px) {
+    .container {
+        margin: 16px auto;
+        padding: 16px;
+        border-radius: 18px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    header > div {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    button {
+        flex: none;
+    }
+}
+
+/* ===== 模态窗口：新建/编辑学生覆盖当前页面 ===== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(15,23,42,0.9), rgba(2,6,23,0.96));
+    backdrop-filter: blur(18px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modal-card {
+    width: min(520px, 92vw);
+    padding: 24px 24px 20px;
+    border-radius: 20px;
+    background: radial-gradient(circle at top left,
+    rgba(15, 23, 42, 0.98),
+    rgba(15, 23, 42, 0.95)
+    );
+    border: 1px solid rgba(148, 163, 184, 0.7);
+    box-shadow:
+        0 28px 80px rgba(15, 23, 42, 0.98),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+}
+
+.modal-card h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e5e7eb;
+}
+
+/* 紧凑搜索条：输入框 + 搜索按钮 + 清除 X */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.9);
+    border-radius: 999px;
+    border: 1px solid rgba(96, 165, 250, 0.95);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    overflow: hidden;
+}
+
+.search-bar input {
+    border: none;
+    border-radius: 999px 0 0 999px;
+    background: transparent;
+    box-shadow: none;
+    margin-bottom: 0;
+}
+
+.search-clear {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(191, 219, 254, 0.9);
+    font-size: 14px;
+    margin-right: 4px;
+}
+
+.search-clear:hover {
+    color: #f97373;
+}
+
+.search-button {
+    margin-right: 0;
+    border-radius: 0 999px 999px 0;
+    padding-inline: 16px;
+}

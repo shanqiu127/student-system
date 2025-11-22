@@ -7,6 +7,15 @@ import org.springframework.data.domain.Page;  // 导入Page类，用于分页结
 import org.springframework.data.domain.Pageable;  // 导入Pageable接口，用于分页参数
 import org.springframework.http.ResponseEntity;  // 导入ResponseEntity，用于构建HTTP响应
 import org.springframework.web.bind.annotation.*;  // 导入Spring Web注解，用于REST API
+import org.springframework.web.multipart.MultipartFile;
+import org.apache.poi.ss.usermodel.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import jakarta.validation.Valid;  // 导入Valid注解，用于验证请求体
 
@@ -25,10 +34,9 @@ public class StudentController {
     @GetMapping
     // 处理GET请求，列出学生，支持分页和过滤
     public PagedResponse<StudentResponseDto> list(
-            @RequestParam(required = false) String name,
             @RequestParam(required = false) String studentNo,
             Pageable pageable) {
-        Page<StudentResponseDto> page = service.list(pageable, name, studentNo);
+        Page<StudentResponseDto> page = service.list(pageable, studentNo);
         // 自定义返回分页数据结构
         return new PagedResponse<>(
                 page.getContent(),
@@ -62,5 +70,92 @@ public class StudentController {
         // 调用服务层删除学生，若不存在返回404 Not Found，否则返回204 No Content
         if (!service.delete(id)) return ResponseEntity.notFound().build();
         return ResponseEntity.noContent().build();
+    }
+    // 处理POST请求，支持Excel一键导入学生数据
+    @PostMapping("/import")
+    public ResponseEntity<String> importStudents(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("文件不能为空");
+        }
+        try (InputStream in = file.getInputStream(); Workbook workbook = WorkbookFactory.create(in)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            int imported = 0;
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) { // 从第2行开始，跳过表头
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+                Cell nameCell = row.getCell(0);
+                Cell noCell = row.getCell(1);
+                Cell classCell = row.getCell(2);
+                Cell guardianCell = row.getCell(3);
+                if (nameCell == null && noCell == null) continue;
+
+                StudentRequestDto dto = new StudentRequestDto();
+                dto.setName(getStringCell(nameCell));
+                dto.setStudentNo(getStringCell(noCell));
+                dto.setClassName(getStringCell(classCell));
+                dto.setPhone(getStringCell(guardianCell)); // 监护人手机号
+                if (dto.getStudentNo() == null || dto.getStudentNo().isBlank()) {
+                    continue; // 学号必填
+                }
+                service.create(dto);
+                imported++;
+            }
+            return ResponseEntity.ok("成功导入 " + imported + " 条学生记录");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("导入失败: " + e.getMessage());
+        }
+    }
+    // 处理GET请求，下载Excel导入模板
+    @GetMapping("/template")
+    public ResponseEntity<byte[]> downloadTemplate() {
+        try (Workbook workbook = WorkbookFactory.create(true)) { // true -> XSSF (.xlsx)
+            Sheet sheet = workbook.createSheet("Students");
+            //第1行：表头
+            Row header = sheet.createRow(0);
+            header.createCell(0).setCellValue("姓名");
+            header.createCell(1).setCellValue("学号");
+            header.createCell(2).setCellValue("班级");
+            header.createCell(3).setCellValue("监护人手机号");
+            //第2行：给出示例数据
+            Row example = sheet.createRow(1);
+            example.createCell(0).setCellValue("张三");
+            example.createCell(1).setCellValue("2025001");
+            example.createCell(2).setCellValue("高一1班");
+            example.createCell(3).setCellValue("13800001111");
+            for (int i = 0; i <= 3; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+            workbook.write(bos);
+            byte[] bytes = bos.toByteArray();
+            // 设置响应头，提示下载文件
+            String fileName = URLEncoder.encode("student-import-template.xlsx", StandardCharsets.UTF_8);
+            HttpHeaders headers = new HttpHeaders();
+            // 设置内容类型为Excel文件
+            headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+            headers.setContentLength(bytes.length);
+            headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+
+            return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+    // 辅助方法：获取单元格字符串值，处理不同类型的单元格
+    private static String getStringCell(Cell cell) {
+        if (cell == null) return null;
+        if (cell.getCellType() == CellType.STRING) return cell.getStringCellValue().trim();
+        if (cell.getCellType() == CellType.NUMERIC) {
+            double v = cell.getNumericCellValue();
+            long lv = (long) v;
+            if (Math.abs(v - lv) < 1e-6) {
+                return String.valueOf(lv);
+            }
+            return String.valueOf(v);
+        }
+        cell.setCellType(CellType.STRING);
+        return cell.getStringCellValue().trim();
     }
 }

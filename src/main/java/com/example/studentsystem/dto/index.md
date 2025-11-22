@@ -12,10 +12,10 @@
 - `studentNo` (String) — 学号，`@NotBlank`，`@Size(max = 50)`
 - `name` (String) — 姓名，`@NotBlank`，`@Size(max = 100)`
 - `gender` (String) — 性别（可选）
-- `dob` (LocalDate) — 出生日期，`@Past`
-- `email` (String) — 邮箱，`@Email`
-- `phone` (String) — 电话（可选）
+- `dob` (LocalDate) — 出生日期，`@Past`（可选）
+- `phone` (String) — 监护人电话
 - `address` (String) — 地址（可选）
+- `className` (String) — 班级名称（可选，`@Size(max = 100)`）
 
 备注：用于请求验证，通常在 Controller 方法上配合 `@Valid` 使用。
 
@@ -28,9 +28,9 @@
 - `name` (String)
 - `gender` (String)
 - `dob` (LocalDate)
-- `email` (String)
 - `phone` (String)
 - `address` (String)
+- `className` (String)
 
 备注：响应 DTO 不包含校验注解，旨在输出已持久化的数据。
 
@@ -38,4 +38,3 @@
 - 新增流程：Controller 接收 `StudentRequestDto`（`@Valid`），Service 使用 `StudentMapper.toEntity(dto)` 将 DTO 转为实体，调用 `repo.save(entity)` 保存，最后 `StudentMapper.toDto(savedEntity)` 转为 `StudentResponseDto` 返回。
 - 更新流程：先通过 `repo.findById(id)` 获取实体，使用 `StudentMapper.updateEntityFromDto(dto, entity)` 覆盖字段，`repo.save(entity)`，再返回 DTO。
 - 查询流程：`repo.findById(id).map(StudentMapper::toDto)` 返回 `Optional<StudentResponseDto]`，优雅处理空值。
-

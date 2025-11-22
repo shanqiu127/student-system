@@ -99,6 +99,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         // 公开
                         .requestMatchers("/api/auth/**", "/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        // 允许已登录用户访问学生相关接口（包括模板下载和导入）
+                        .requestMatchers("/api/students/template", "/api/students/import").authenticated()
                         // 其他认证
                         .anyRequest().authenticated()
                 )

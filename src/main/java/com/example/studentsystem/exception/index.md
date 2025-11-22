@@ -25,7 +25,10 @@
   "error": "Bad Request",
   "message": "Validation failed",
   "path": "/api/students",
-  "errors": ["studentNo: 学号不能为空", "email: 邮箱格式不正确"]
+  "errors": [
+    "studentNo: 学号不能为空",
+    "phone: 监护人手机号必须是以1开头的11位数字"
+  ]
 }
 ```
 
@@ -52,7 +55,3 @@
         "path":"/api/students"
       }
       ```
-
-
-
-
