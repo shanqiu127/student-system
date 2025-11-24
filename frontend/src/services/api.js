@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getToken, clearToken } from '../utils/auth';
 
-// Base URL loaded from Vite env (set VITE_API_BASE_URL when running), fallback to localhost:8081
+// 从 Vite 环境变量读取后端基础 URL（开发时可通过 VITE_API_BASE_URL 设置）
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
 
 const api = axios.create({
@@ -9,7 +9,8 @@ const api = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
-// Request interceptor: add Authorization header if token present
+// 请求拦截器：在每次请求发送前，检查本地是否存在 token，若存在则添加 Authorization 头
+// 这样后端可以通过 Bearer token 进行鉴权
 api.interceptors.request.use((config) => {
     const token = getToken();
     if (token) {
@@ -22,9 +23,8 @@ api.interceptors.request.use((config) => {
 // Response interceptor: handle 401/403 globally (optional)
 api.interceptors.response.use((res) => res, (error) => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-        // Optionally clear token on unauthorized
+        // 清理本地存储的 token，使后续请求不再携带旧 token
         clearToken();
-        // Could redirect to login from UI; here we just reject so UI can handle it
     }
     return Promise.reject(error);
 });

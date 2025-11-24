@@ -3,7 +3,7 @@ package com.example.studentsystem.mapper;
 import com.example.studentsystem.model.Student;
 import com.example.studentsystem.dto.StudentRequestDto;
 import com.example.studentsystem.dto.StudentResponseDto;
-//这是一个映射器类，用于在Student实体和DTO（StudentRequestDto、StudentResponseDto）之间转换数据，避免直接暴露实体。
+//这是一个映射器类，用于在实体和DTO（StudentRequestDto、StudentResponseDto）之间转换数据，避免直接暴露实体。
 //toEntity(dto)：将请求DTO转换为新Student实体，设置所有字段。
 //toDto(s)：将Student实体转换为响应DTO，包含ID和所有字段。
 //updateEntityFromDto(dto, s)：使用DTO更新现有Student实体，覆盖所有字段。
@@ -17,7 +17,7 @@ public class StudentMapper {
         s.setName(dto.getName());
         s.setGender(dto.getGender());
         s.setDob(dto.getDob());
-        s.setPhone(dto.getPhone());      // guardian phone -> entity phone (mapped to email column)
+        s.setPhone(dto.getPhone());
         s.setPhoneBackup(dto.getPhoneBackup());
         s.setAddress(dto.getAddress());
         s.setClassName(dto.getClassName());
@@ -32,7 +32,7 @@ public class StudentMapper {
         dto.setName(s.getName());
         dto.setGender(s.getGender());
         dto.setDob(s.getDob());
-        dto.setPhone(s.getPhone());          // guardian phone
+        dto.setPhone(s.getPhone());
         dto.setPhoneBackup(s.getPhoneBackup());
         dto.setAddress(s.getAddress());
         dto.setClassName(s.getClassName());
@@ -45,7 +45,7 @@ public class StudentMapper {
         s.setName(dto.getName());
         s.setGender(dto.getGender());
         s.setDob(dto.getDob());
-        s.setPhone(dto.getPhone());          // guardian phone
+        s.setPhone(dto.getPhone());
         s.setPhoneBackup(dto.getPhoneBackup());
         s.setAddress(dto.getAddress());
         s.setClassName(dto.getClassName());

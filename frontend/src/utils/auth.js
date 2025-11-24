@@ -1,4 +1,4 @@
-// Very small auth helper using localStorage for demo purposes.
+//用于管理JWT令牌的存储和检索在本地存储中
 const TOKEN_KEY = 'app_jwt_token';
 
 export function saveToken(token) {

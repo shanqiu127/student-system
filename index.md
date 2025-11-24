@@ -1,5 +1,22 @@
 # 学生信息管理系统
-- 技术栈：Java 17, Spring Boot, Spring Data JPA, MySQL, Maven, Spring Security + JWT, React + Vite (前端)
+- 后端：Spring Boot（Java）
+  入口：src/main/java/com/example/studentsystem/StudentSystemApplication.java。
+  依赖与构建：Maven，pom.xml 管理依赖与插件。
+  常见分层：controller/、service/、repository/、model/、dto/、mapper/、exception/、security/（见 src/main/java/... 目录）。
+  配置：src/main/resources/application.properties 与 application-dev.properties 控制环境配置。
+  异常处理：项目使用 @RestControllerAdvice 类（如 exception 包下的 GlobalExceptionHandler / ErrorResponse）统一返回 JSON 给前端（无需前端直接引用）。
+  持久层：Spring Data JPA（repository 层）或类似 ORM（通过 repository 包和实体 model 可见），数据库连接由 application*.properties 配置。
+  安全：存在 security/ 包，通常使用 Spring Security（鉴权/会话/JWT 等在该包实现）。
+  前端：React + Vite（现代前端）
+  源码：frontend/src/，入口 frontend/src/main.jsx。
+  页面与组件：frontend/src/pages/、frontend/src/components/（例：StudentForm.jsx）。
+  服务层：frontend/src/services/api.js 封装 fetch/axios 请求与后端 ErrorResponse 的统一处理。
+  工具：frontend/src/utils/auth.js 用于前端鉴权逻辑。
+  构建工具与脚本：frontend/package.json、vite.config.js（开发 npm install + npm run dev，生产构建 npm run build）。
+  打包与产物：后端打包为可执行 JAR，生成在 target/（如 student-system-0.0.1-SNAPSHOT.jar）。
+  测试：JUnit 测试类位于 test/，构建报告在 target/surefire-reports/。
+  常见数据交互与错误处理流程：前端通过 REST 调用后端 API（/api/...），后端返回 HTTP 状态码与 JSON（统一 ErrorResponse），前端在 api.js 中拦截并展示错误或表单字段错误。
+  简短总结：这是一个典型的 Java Spring Boot + React（Vite）全栈项目，Maven 管理后端依赖与构建，前端使用 Vite + React 进行开发与打包，后端负责 REST API、数据持久化与安全
 ## 项目概览
 
 根目录结构（简要）：
@@ -39,12 +56,9 @@ student-system/
 │  │  │  └─ service/
 │  │  └─ resources/
 │  │     ├─ application.properties         # 生产/默认配置
-│  │     └─ application-dev.properties     # 开发配置（通常用于 H2）
+│  │     └─ application-dev.properties     # 开发配置（用于 H2）
 └─ target/                       # Maven 构建输出
 ```
-
-说明：上面列出的文件/目录为常见条目；项目中可能还有更多细分包（如 jwt、web、config 等）。
-
 ---
 
 ## 前端（Frontend）说明

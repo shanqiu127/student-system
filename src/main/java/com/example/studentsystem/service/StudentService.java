@@ -15,7 +15,7 @@ public interface StudentService {
     StudentResponseDto create(StudentRequestDto dto);
     // 根据ID获取学生记录，返回Optional<StudentResponseDto>，找不到时为空。
     Optional<StudentResponseDto> getById(Long id);
-    // 列出学生记录，仅支持按 studentNo 模糊查询（或全部），不再按 name 搜索
+    // 列出学生记录，仅支持按 studentNo 模糊查询（全部）
     Page<StudentResponseDto> list(Pageable pageable, String studentNo);
     // 更新学生记录
     Optional<StudentResponseDto> update(Long id, StudentRequestDto dto);

@@ -2,10 +2,10 @@ package com.example.studentsystem.dto;
 
 import java.time.LocalDate;
 
-//这是一个数据传输对象（DTO）类，用于封装学生响应数据，类似于StudentRequestDto，但用于API响应。
-//包含与Student实体相同的字段：id、studentNo、name、gender、dob（LocalDate类型）、email、phone、address。
-//提供所有字段的标准getter和setter方法，用于序列化响应数据（如JSON）。
-//无验证注解，因为它是响应对象，不需要输入验证；常用于从实体映射数据返回给客户端。
+    /*这是一个数据传输对象（DTO）类，用于封装学生响应数据，把持久化的学生数据返回给客户端（序列化为 JSON 等）。
+    提供所有字段的标准getter和setter方法，用于序列化响应数据（如JSON）。
+    无验证注解，因为它是响应对象，不需要输入验证；常用于从实体映射数据返回给客户端。
+     */
 public class StudentResponseDto {
     private Long id;
     private String studentNo;
@@ -13,7 +13,7 @@ public class StudentResponseDto {
     private String gender;
     private LocalDate dob;
     private String phone;  // 监护人手机号
-    private String phoneBackup;  // 备用联系电话（如果有）
+    private String phoneBackup;  // 备用联系电话（备选）
     private String address;
     private String className;
 

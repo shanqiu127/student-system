@@ -1,10 +1,15 @@
 package com.example.studentsystem.dto;
 
-import jakarta.validation.constraints.NotBlank;  // 导入NotBlank注解，用于验证字段不能为空（忽略空白字符）
-import jakarta.validation.constraints.Size;     // 导入Size注解，用于验证字段长度
-import jakarta.validation.constraints.Past;    // 导入Past注解，用于验证日期必须是过去的日期
-import java.time.LocalDate;                   // 导入LocalDate类，用于处理日期
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Past;
+import java.time.LocalDate;
+    /*
+    学生请求数据传输对象（DTO）类
+    包含学生的基本信息字段，并使用注解进行数据验证
+    包括学号、姓名、性别、出生日期、监护人手机号等
+    提供getter和setter方法以访问和修改字段值
+     */
 public class StudentRequestDto {  // 数据传输对象（DTO），用于接收和验证学生请求数据
     @NotBlank(message = "学号不能为空")
     @Size(max = 50)  // 验证学号最大长度为50字符
@@ -24,7 +29,7 @@ public class StudentRequestDto {  // 数据传输对象（DTO），用于接收�
             regexp = "^1\\d{10}$",
             message = "监护人手机号必须是以1开头的11位数字"
     )
-    private String phone;  // guardian phone
+    private String phone;
 
     private String phoneBackup;  // 备用：预留电话
     private String address;  // 备用：地址
