@@ -31,8 +31,7 @@ public class StudentRequestDto {  // 数据传输对象（DTO），用于接收�
     )
     private String phone;
 
-    private String phoneBackup;  // 备用：预留电话
-    private String address;  // 备用：地址
+    private String address;  // ：地址
 
     //班级字段，限制最大长度
     @Size(max = 100)
@@ -49,8 +48,6 @@ public class StudentRequestDto {  // 数据传输对象（DTO），用于接收�
     public void setDob(LocalDate dob) { this.dob = dob; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-    public String getPhoneBackup() { return phoneBackup; }
-    public void setPhoneBackup(String phoneBackup) { this.phoneBackup = phoneBackup; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
     public String getClassName() { return className; }

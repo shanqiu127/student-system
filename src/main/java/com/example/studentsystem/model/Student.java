@@ -19,8 +19,7 @@ public class Student {
 
     private String phone;      // 监护人手机号
 
-    private String phoneBackup;      // 预留的联系电话（如备用手机），目前暂未使用
-    private String address;    // 地址，目前暂未使用
+    private String address;    // 地址
 
     private String className;  // 班级
 
@@ -37,8 +36,6 @@ public class Student {
     public void setDob(LocalDate dob) { this.dob = dob; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
-    public String getPhoneBackup() { return phoneBackup; }
-    public void setPhoneBackup(String phoneBackup) { this.phoneBackup = phoneBackup; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
     public String getClassName() { return className; }

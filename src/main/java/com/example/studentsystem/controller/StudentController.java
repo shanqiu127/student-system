@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import jakarta.validation.Valid;  // 导入Valid注解，用于验证请求体
 
@@ -83,17 +85,37 @@ public class StudentController {
             for (int i = 1; i <= sheet.getLastRowNum(); i++) { // 从第2行开始，跳过表头
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
-                Cell nameCell = row.getCell(0);
-                Cell noCell = row.getCell(1);
-                Cell classCell = row.getCell(2);
-                Cell guardianCell = row.getCell(3);
+                
+                // 读取所有字段：姓名、学号、性别、出生日期、班级、监护人手机号、地址
+                Cell nameCell = row.getCell(0);      // 第1列：姓名
+                Cell noCell = row.getCell(1);        // 第2列：学号
+                Cell genderCell = row.getCell(2);    // 第3列：性别
+                Cell dobCell = row.getCell(3);       // 第4列：出生日期
+                Cell classCell = row.getCell(4);     // 第5列：班级
+                Cell phoneCell = row.getCell(5);     // 第6列：监护人手机号
+                Cell addressCell = row.getCell(6);   // 第7列：地址
+                
                 if (nameCell == null && noCell == null) continue;
 
                 StudentRequestDto dto = new StudentRequestDto();
                 dto.setName(getStringCell(nameCell));
                 dto.setStudentNo(getStringCell(noCell));
-                dto.setClassName(getStringCell(classCell));
-                dto.setPhone(getStringCell(guardianCell)); // 监护人手机号
+                dto.setGender(getStringCell(genderCell));        // 性别
+                
+                // 解析出生日期（yyyy-MM-dd 格式）
+                String dobStr = getStringCell(dobCell);
+                if (dobStr != null && !dobStr.isBlank()) {
+                    try {
+                        dto.setDob(LocalDate.parse(dobStr, DateTimeFormatter.ISO_LOCAL_DATE));
+                    } catch (Exception e) {
+                        // 日期格式错误，忽略
+                    }
+                }
+                
+                dto.setClassName(getStringCell(classCell));      // 班级
+                dto.setPhone(getStringCell(phoneCell));          // 监护人手机号
+                dto.setAddress(getStringCell(addressCell));      // 地址
+                
                 if (dto.getStudentNo() == null || dto.getStudentNo().isBlank()) {
                     continue; // 学号必填
                 }
@@ -114,15 +136,23 @@ public class StudentController {
             Row header = sheet.createRow(0);
             header.createCell(0).setCellValue("姓名");
             header.createCell(1).setCellValue("学号");
-            header.createCell(2).setCellValue("班级");
-            header.createCell(3).setCellValue("监护人手机号");
+            header.createCell(2).setCellValue("性别");
+            header.createCell(3).setCellValue("出生日期");
+            header.createCell(4).setCellValue("班级");
+            header.createCell(5).setCellValue("监护人手机号");
+            header.createCell(6).setCellValue("地址");
+            
             //第2行：给出示例数据
             Row example = sheet.createRow(1);
             example.createCell(0).setCellValue("张三");
             example.createCell(1).setCellValue("2025001");
-            example.createCell(2).setCellValue("高一1班");
-            example.createCell(3).setCellValue("13800001111");
-            for (int i = 0; i <= 3; i++) {
+            example.createCell(2).setCellValue("男");
+            example.createCell(3).setCellValue("2005-06-15");
+            example.createCell(4).setCellValue("高一1班");
+            example.createCell(5).setCellValue("13800001111");
+            example.createCell(6).setCellValue("北京市朝阳区");
+            
+            for (int i = 0; i <= 6; i++) {
                 sheet.autoSizeColumn(i);
             }
 

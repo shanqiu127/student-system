@@ -18,7 +18,6 @@ public class StudentMapper {
         s.setGender(dto.getGender());
         s.setDob(dto.getDob());
         s.setPhone(dto.getPhone());
-        s.setPhoneBackup(dto.getPhoneBackup());
         s.setAddress(dto.getAddress());
         s.setClassName(dto.getClassName());
         return s;
@@ -33,7 +32,6 @@ public class StudentMapper {
         dto.setGender(s.getGender());
         dto.setDob(s.getDob());
         dto.setPhone(s.getPhone());
-        dto.setPhoneBackup(s.getPhoneBackup());
         dto.setAddress(s.getAddress());
         dto.setClassName(s.getClassName());
         return dto;
@@ -46,7 +44,6 @@ public class StudentMapper {
         s.setGender(dto.getGender());
         s.setDob(dto.getDob());
         s.setPhone(dto.getPhone());
-        s.setPhoneBackup(dto.getPhoneBackup());
         s.setAddress(dto.getAddress());
         s.setClassName(dto.getClassName());
     }
