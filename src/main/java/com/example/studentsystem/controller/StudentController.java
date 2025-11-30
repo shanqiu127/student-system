@@ -73,6 +73,21 @@ public class StudentController {
         if (!service.delete(id)) return ResponseEntity.notFound().build();
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/batch")  // 处理DELETE请求，批量删除学生
+    public ResponseEntity<String> batchDelete(@RequestBody List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return ResponseEntity.badRequest().body("删除列表不能为空");
+        }
+        int deleted = 0;
+        // 遍历ID列表，逐个删除
+        for (Long id : ids) {
+            if (service.delete(id)) {
+                deleted++;
+            }
+        }
+        return ResponseEntity.ok("成功删除 " + deleted + " 条学生记录");
+    }
     // 处理POST请求，支持Excel一键导入学生数据
     @PostMapping("/import")
     public ResponseEntity<String> importStudents(@RequestParam("file") MultipartFile file) {

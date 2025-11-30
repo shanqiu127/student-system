@@ -11,9 +11,10 @@ import {
     Upload,
     GraduationCap,
     ArrowDown,
-    Plus
+    Plus,
+    Trash2
 } from 'lucide-react';
-import { clearToken } from '../utils/auth';
+import { clearToken, getUsername } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -74,6 +75,8 @@ export default function Students() {
     const [loading, setLoading] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);//显示用户菜单
     const [jumpPage, setJumpPage] = useState(''); // 跳转页码输入
+    const [currentUsername, setCurrentUsername] = useState(''); // 当前用户名
+    const [selectedIds, setSelectedIds] = useState([]); // 选中的学生ID列表
     
     // 确认对话框状态
     const [confirmDialog, setConfirmDialog] = useState({
@@ -87,6 +90,20 @@ export default function Students() {
     useEffect(() => {
         load();
     }, [page, keyword, size]);
+
+    // 组件加载时获取用户名
+    useEffect(() => {
+        const username = getUsername();
+        if (username) {
+            setCurrentUsername(username);
+        }
+    }, []);
+
+    // 当分页变化时，清空选中状态
+    useEffect(() => {
+        setSelectedIds([]);
+    }, [page, size]);
+    // 注意：移除了 keyword 依赖，这样搜索时不会清空选中状态
     // load：从后端获取学生列表，支持分页与按学号搜索
     async function load() {
         setLoading(true);
@@ -170,6 +187,54 @@ export default function Students() {
                     await load();
                 } catch (e) {
                     const msg = extractErrorMessage(e, '删除失败');
+                    toast.error(msg, { id: loadingToast });
+                }
+                setConfirmDialog({ ...confirmDialog, isOpen: false });
+            }
+        });
+    }
+
+    // 处理全选/反选
+    function handleSelectAll(checked) {
+        if (checked) {
+            const allIds = students.map(s => s.id);
+            setSelectedIds(allIds);
+        } else {
+            setSelectedIds([]);
+        }
+    }
+
+    // 处理单个选择
+    function handleSelectOne(id, checked) {
+        if (checked) {
+            setSelectedIds(prev => [...prev, id]);
+        } else {
+            setSelectedIds(prev => prev.filter(item => item !== id));
+        }
+    }
+
+    // 批量删除
+    async function batchDelete() {
+        if (selectedIds.length === 0) {
+            toast.error('请至少选择一个学生');
+            return;
+        }
+        setConfirmDialog({
+            isOpen: true,
+            type: 'danger',
+            title: '批量删除学生',
+            message: `确认要删除选中的 ${selectedIds.length} 个学生吗？此操作无法撤销。`,
+            onConfirm: async () => {
+                const loadingToast = toast.loading('批量删除中...');
+                try {
+                    const resp = await api.delete('/api/students/batch', {
+                        data: selectedIds
+                    });
+                    toast.success(resp.data || '批量删除成功', { id: loadingToast });
+                    setSelectedIds([]);
+                    await load();
+                } catch (e) {
+                    const msg = extractErrorMessage(e, '批量删除失败');
                     toast.error(msg, { id: loadingToast });
                 }
                 setConfirmDialog({ ...confirmDialog, isOpen: false });
@@ -282,9 +347,8 @@ export default function Students() {
                     <span>学生信息管理系统</span>
                 </div>
                 <div className="user-menu" onClick={() => setShowUserMenu(!showUserMenu)}>
-                    <div className="avatar">A</div>
-                    {/*可以增加管理员的真实名字*/}
-                    <span>管理员 Admin</span>
+                    <div className="avatar">{currentUsername ? currentUsername.charAt(0).toUpperCase() : 'A'}</div>
+                    <span>{currentUsername ? `管理员 ${currentUsername}` : '管理员'}</span>
                     <ArrowDown size={16} />
                     {showUserMenu && (
                         <div className="dropdown-menu">
@@ -334,6 +398,14 @@ export default function Students() {
                                 <Plus size={16} />
                                 新建学生
                             </button>
+                            <button 
+                                className="danger-btn" 
+                                onClick={batchDelete}
+                                disabled={selectedIds.length === 0}
+                            >
+                                <Trash2 size={16} />
+                                批量删除 {selectedIds.length > 0 && `(${selectedIds.length})`}
+                            </button>
                             {/*一键导入*/}
                             <input
                                 ref={fileInputRef}
@@ -350,6 +422,15 @@ export default function Students() {
                         <table className="students-table">
                             <thead>
                                 <tr>
+                                     {/*全选*/}
+                                    <th style={{ width: '50px' }}>
+                                        <input
+                                            type="checkbox"
+                                            className="table-checkbox"
+                                            checked={students.length > 0 && selectedIds.length === students.length}
+                                            onChange={(e) => handleSelectAll(e.target.checked)}
+                                        />
+                                    </th>
                                     <th>学号</th>
                                     <th>姓名</th>
                                     <th>性别</th>
@@ -364,19 +445,28 @@ export default function Students() {
                             <tbody>
                                 {loading ? (
                                     <tr>
-                                        <td colSpan="9" className="loading-cell">
+                                        <td colSpan="10" className="loading-cell">
                                             加载中...
                                         </td>
                                     </tr>
                                 ) : students.length === 0 ? (
                                     <tr>
-                                        <td colSpan="9" className="empty-cell">
+                                        <td colSpan="10" className="empty-cell">
                                             暂无数据
                                         </td>
                                     </tr>
                                 ) : (
                                     students.map((s) => (
                                         <tr key={s.id}>
+                                             {/*选择框*/}
+                                            <td>
+                                                <input
+                                                    type="checkbox"
+                                                    className="table-checkbox"
+                                                    checked={selectedIds.includes(s.id)}
+                                                    onChange={(e) => handleSelectOne(s.id, e.target.checked)}
+                                                />
+                                            </td>
                                             <td>{s.studentNo}</td>
                                             <td>{s.name}</td>
                                             <td>

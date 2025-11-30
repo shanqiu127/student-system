@@ -26,6 +26,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password; // 已加密的密码
 
+    @Column(unique = true)
+    private String email; // 邮箱地址（可选）
+
     /**
      * 角色集合：
      * - FetchTypeEAGER：每次加载用户时一并加载角色。
@@ -50,6 +53,9 @@ public class User implements UserDetails {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     /**
      * 将roles集合返回可识别的 GrantedAuthority 列表。

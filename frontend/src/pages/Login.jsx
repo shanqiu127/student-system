@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
-import { saveToken, clearToken } from '../utils/auth';
+import { saveToken, saveUsername, clearToken } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { User, Lock } from 'lucide-react';
@@ -31,6 +31,7 @@ export default function Login() {
                 return;
             }
             saveToken(token);
+            saveUsername(username); // 保存用户名
             toast.success(`登录成功，欢迎回来！`);
             // 登录成功后跳转到主页面
             navigate('/app/students');
@@ -95,7 +96,7 @@ export default function Login() {
                                 />
                                 <span>记住我</span>
                             </label>
-                            <span className="link-text">忘记密码?</span>
+                            <span className="link-text" onClick={() => navigate('/reset-password')}>忘记密码?</span>
                         </div>
 
                         <button type="submit" className="login-btn" disabled={isLoading}>

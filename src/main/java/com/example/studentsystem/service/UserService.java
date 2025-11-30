@@ -34,7 +34,7 @@ public class UserService {
     /**
      * 构造注入：
      * - 保证依赖的不可变性（final）。
-     * - PasswordEncoder 由安全配置中定义。
+     * - PasswordEncoder 由配置中定义。
      */
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
@@ -54,16 +54,18 @@ public class UserService {
      * - 角色集合使用 Set 避免重复角色。
      * @param username 新用户名（需唯一）
      * @param rawPassword 原始输入密码（未加密）
+     * @param email 邮箱地址
      * @return 持久化后的用户对象
      * @throws IllegalArgumentException 若用户名已存在
      */
-    public User register(String username, String rawPassword) {
+    public User register(String username, String rawPassword, String email) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("用户名已存在");
         }
         User u = new User();
         u.setUsername(username);
         u.setPassword(passwordEncoder.encode(rawPassword)); // 密码加密
+        u.setEmail(email != null ? email.trim().toLowerCase() : null); // 邮箱预处理
         u.setRoles(Set.of(Role.ROLE_USER)); // 默认授予普通用户角色
         return userRepository.save(u);
     }
@@ -106,5 +108,23 @@ public class UserService {
             User admin = new User(adminUser, passwordEncoder.encode(adminPass), Set.of(Role.ROLE_ADMIN));
             userRepository.save(admin);
         }
+    }
+
+    /**
+     * resetPassword
+     * 功能：根据邮箱重置用户密码。
+     * 流程：
+     * 1. 根据邮箱查找用户，若不存在抛出异常。
+     * 2. 使用 PasswordEncoder 对新密码加密。
+     * 3. 更新并保存用户。
+     * @param email 用户邮箱
+     * @param newPassword 新密码（未加密）
+     * @throws IllegalArgumentException 若邮箱不存在
+     */
+    public void resetPassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("该邮箱未注册"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }

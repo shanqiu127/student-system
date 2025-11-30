@@ -53,7 +53,7 @@ public class JwtService {
      * - 不在此处直接生成 Key 而放到 @PostConstruct 方法 便于捕获异常与日志输出.
      */
     public JwtService(@Value("${app.jwt.secret:}") String secret,
-                      @Value("${app.jwt.expiration-ms:86400000}") long jwtExpirationMs) {
+                      @Value("${app.jwt.expiration:86400000}") long jwtExpirationMs) {
         this.secret = Optional.ofNullable(secret).orElse("").trim();
         this.jwtExpirationMs = jwtExpirationMs;
     }

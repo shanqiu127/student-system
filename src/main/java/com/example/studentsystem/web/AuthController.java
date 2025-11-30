@@ -3,6 +3,7 @@ package com.example.studentsystem.web;
 
 import com.example.studentsystem.security.jwt.JwtService;
 import com.example.studentsystem.service.UserService;
+import com.example.studentsystem.service.EmailVerificationService;
 import com.example.studentsystem.web.dto.AuthRequest;
 import com.example.studentsystem.web.dto.AuthResponse;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * AuthController
@@ -42,6 +45,8 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     // JwtService：负责生成 JWT（登录成功后签发），与过滤器共用解析/校验逻辑
     private final JwtService jwtService;
+    // EmailVerificationService：邮箱验证服务
+    private final EmailVerificationService emailVerificationService;
 
     /**
      * 构造函数注入：
@@ -50,10 +55,12 @@ public class AuthController {
      */
     public AuthController(UserService userService,
                           AuthenticationManager authenticationManager,
-                          JwtService jwtService) {
+                          JwtService jwtService,
+                          EmailVerificationService emailVerificationService) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.emailVerificationService = emailVerificationService;
     }
 
     /**
@@ -70,7 +77,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequest req) {
         try {
-            userService.register(req.username(), req.password());
+            userService.register(req.username(), req.password(), req.email());
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -102,6 +109,46 @@ public class AuthController {
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(401).body("用户名或密码错误");
+        }
+    }
+
+    /**
+     * POST /api/auth/reset-password
+     * 功能：重置密码（需要邮箱验证）。
+     * 输入：{ email, code, newPassword }
+     * 步骤：
+     * 1. 校验邮箱验证码是否正确且未过期。
+     * 2. 验证通过后调用 userService.resetPassword 更新密码。
+     * 3. 返回成功消息。
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String code = request.get("code");
+            String newPassword = request.get("newPassword");
+
+            if (email == null || email.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("邮箱地址不能为空");
+            }
+            if (code == null || code.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("验证码不能为空");
+            }
+            if (newPassword == null || newPassword.length() < 6) {
+                return ResponseEntity.badRequest().body("密码至少需要6个字符");
+            }
+
+            // 1. 校验邮箱验证码
+            emailVerificationService.verifyCode(email, code, "reset_password");
+
+            // 2. 重置密码
+            userService.resetPassword(email, newPassword);
+
+            return ResponseEntity.ok("密码重置成功，请使用新密码登录");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.status(500).body("重置密码失败，请稍后重试");
         }
     }
 }

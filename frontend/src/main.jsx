@@ -8,6 +8,7 @@ import './styles.css'; // 全局样式表
 // ============ 导入页面组件 ============
 import Login from './pages/Login'; // 登录页面
 import Register from './pages/Register'; // 注册页面
+import ResetPassword from './pages/ResetPassword'; // 重置密码页面
 import Terms from './pages/Terms'; // 服务条款页面
 import Dashboard from './pages/Dashboard'; // 仪表盘页面（需要认证）
 import Students from './pages/Students'; // 学生管理页面（需要认证）
@@ -66,6 +67,7 @@ function App() {
                 {/* 公开路由 - 无需认证 */}
                 <Route path="/login" element={<Login />} /> {/* 登录页面 */}
                 <Route path="/register" element={<Register />} /> {/* 注册页面 */}
+                <Route path="/reset-password" element={<ResetPassword />} /> {/* 重置密码页面 */}
                 <Route path="/terms" element={<Terms />} /> {/* 服务条款页面 */}
                 
                 {/* 受保护的路由 - 需要有效的 JWT Token */}
