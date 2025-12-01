@@ -2,26 +2,24 @@ import React, { useState, useRef, useEffect } from 'react';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { User, Lock, ArrowLeft, RefreshCw, Shield, Mail, Send } from 'lucide-react';
+import { User, Lock, ArrowLeft, Mail, Shield } from 'lucide-react';
 import { generateCaptchaCode, drawCaptcha, verifyCaptcha } from '../utils/captcha';
 
-// 注册页面组件：采用玻璃态深色风格，对接后端注册接口
+// 简约风格注册页面
 export default function Register() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [emailPrefix, setEmailPrefix] = useState(''); // 邮箱前缀
-    const [emailDomain, setEmailDomain] = useState('@qq.com'); // 邮箱域名
-    const [emailCode, setEmailCode] = useState(''); // 邮箱验证码
-    const [emailCodeSent, setEmailCodeSent] = useState(false); // 是否已发送
-    const [countdown, setCountdown] = useState(0); // 发送验证码倒计时
-    const [emailVerified, setEmailVerified] = useState(false); // 邮箱是否已验证
-    const [captchaInput, setCaptchaInput] = useState('');//验证码输入
-    const [captchaCode, setCaptchaCode] = useState('');//验证码
-    const [agreedToTerms, setAgreedToTerms] = useState(false);//服务条款同意
-    const [failedAttempts, setFailedAttempts] = useState(0);//失败尝试次数
+    const [email, setEmail] = useState('');
+    const [emailCode, setEmailCode] = useState('');
+    const [countdown, setCountdown] = useState(0);//倒计时
+    const [emailVerified, setEmailVerified] = useState(false);//邮箱验证状态
+    const [captchaInput, setCaptchaInput] = useState('');
+    const [captchaCode, setCaptchaCode] = useState('');
+    const [agreedToTerms, setAgreedToTerms] = useState(false);//是否同意条款
+    const [failedAttempts, setFailedAttempts] = useState(0);
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);//加载中
+    const [isLoading, setIsLoading] = useState(false);
     const canvasRef = useRef(null);//验证码画布
 
     // 生成新的验证码
@@ -56,27 +54,32 @@ export default function Register() {
             return;
         }
 
-        if (!emailPrefix.trim()) {
+        if (!email.trim()) {
             toast.error('请输入邮箱地址');
             return;
         }
-        // 完整邮箱
-        const fullEmail = emailPrefix.trim() + emailDomain;
+
+        // 验证邮箱格式
+        const emailPattern = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(email.trim())) {
+            toast.error('请输入正确的邮箱格式');
+            return;
+        }
 
         try {
             const response = await api.post('/api/auth/email/code/send', { 
-                email: fullEmail,
+                email: email.trim(),
                 scene: 'register' // 注册场景
             });
             if (response.data.code === 0) {
-                toast.success('验证码已发送到您的邮箱，请在 5 分钟内完成验证');
+                toast.success('验证码已发送到您的邮箱,请在 5 分钟内完成验证');
                 setEmailCodeSent(true);
                 setCountdown(60); // 60秒倒计时
             } else {
                 toast.error(response.data.message || '验证码发送失败');
             }
         } catch (error) {
-            const errorMsg = error?.response?.data?.message || '验证码发送失败，请稍后重试';
+            const errorMsg = error?.response?.data?.message || '验证码发送失败,请稍后重试';
             toast.error(errorMsg);
         }
     };
@@ -88,25 +91,25 @@ export default function Register() {
             return;
         }
 
-        const fullEmail = emailPrefix.trim() + emailDomain;
         try {
             const response = await api.post('/api/auth/email/code/verify', {
-                email: fullEmail,
+                email: email.trim(),
                 code: emailCode.trim(),
                 scene: 'register' // 注册场景
             });
 
             if (response.data.code === 0) {
-                toast.success('邮箱验证成功！');
+                toast.success('邮箱验证成功!');
                 setEmailVerified(true);
             } else {
                 toast.error(response.data.message || '验证码错误');
             }
         } catch (error) {
-            const errorMsg = error?.response?.data?.message || '验证失败，请重试';
+            const errorMsg = error?.response?.data?.message || '验证失败,请重试';
             toast.error(errorMsg);
         }
     };
+    // 安全措施：连续失败次数检查
     useEffect(() => {
         if (failedAttempts >= 5) {
             toast.error('尝试次数过多，请30秒后再试');
@@ -183,8 +186,7 @@ export default function Register() {
         
         // 向后端注册接口发送用户名/密码/邮箱
         try {
-            const fullEmail = emailPrefix.trim() + emailDomain;
-            await api.post('/api/auth/register', { username, password, email: fullEmail });
+            await api.post('/api/auth/register', { username, password, email: email.trim() });
             toast.success('注册成功！请登录');
             // 重置失败次数
             setFailedAttempts(0);
@@ -194,43 +196,39 @@ export default function Register() {
             }, 1000);
         } catch (error) {
             const errorMsg = error?.response?.data?.message || error?.response?.data || '注册失败';
-            toast.error(typeof errorMsg === 'string' ? errorMsg : '注册失败，请稍后重试');
+            toast.error(typeof errorMsg === 'string' ? errorMsg : '注册失败,请稍后重试');
             setFailedAttempts(prev => prev + 1);
             refreshCaptcha();
             setIsLoading(false);
         }
     }
 
-    // 渲染注册表单 - 玻璃态深色风格
+    // 渲染简约注册表单
     return (
         <div className="login-root">
-            {/* 氛围光效 */}
-            <div className="ambient-light" />
-            <div className="ambient-light-2" />
-
             <div className="login-wrapper">
                 <div className="glass-card">
-                    {/* 返回登录按钮 */}
+                    {/* 返回按钮 */}
                     <div className="back-to-login" onClick={() => navigate('/login')}>
                         <ArrowLeft size={16} />
-                        <span>返回登录</span>
+                        <span>返回</span>
                     </div>
 
-                    {/* Logo 区域 */}
+                    {/* Logo */}
                     <div className="logo-area">
                         <div className="logo-icon">🎓</div>
-                        <div className="app-title">学生信息管理系统</div>
-                        <div className="app-subtitle">创建您的新账户</div>
+                        <h1 className="app-title">注册新账号</h1>
                     </div>
 
-                    {/* 注册表单 */}
+                    {/* 表单 */}
                     <form onSubmit={doRegister}>
+                        {/* 用户名 */}
                         <div className="form-item">
                             <div className="custom-input">
                                 <User className="input-icon" size={18} />
                                 <input
                                     type="text"
-                                    placeholder="用户名（3-20个字符，字母数字下划线）"
+                                    placeholder="用户名 (3-20字符)"
                                     value={username}
                                     onChange={(e) => setUsername(e.target.value)}
                                     required
@@ -240,13 +238,14 @@ export default function Register() {
                                 />
                             </div>
                         </div>
-                         {/*密码输入框*/}
+
+                        {/* 密码 */}
                         <div className="form-item">
                             <div className="custom-input">
                                 <Lock className="input-icon" size={18} />
                                 <input
                                     type="password"
-                                    placeholder="密码（至少6个字符，建议包含字母和数字）"
+                                    placeholder="密码 (至少6位)"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -255,7 +254,8 @@ export default function Register() {
                                 />
                             </div>
                         </div>
-                        {/*确认密码输入框*/}
+
+                        {/* 确认密码 */}
                         <div className="form-item">
                             <div className="custom-input">
                                 <Lock className="input-icon" size={18} />
@@ -270,29 +270,18 @@ export default function Register() {
                             </div>
                         </div>
 
-                        {/* 邮箱输入 */}
+                        {/* 邮箱 */}
                         <div className="form-item">
-                            <div className="email-input-group">
-                                <div className="custom-input" style={{ flex: 2 }}>
-                                    <Mail className="input-icon" size={18} />
-                                    <input
-                                        type="text"
-                                        placeholder="邮箱前缀"
-                                        value={emailPrefix}
-                                        onChange={(e) => setEmailPrefix(e.target.value)}
-                                        required
-                                        disabled={failedAttempts >= 5 || emailVerified}
-                                    />
-                                </div>
-                                <select
-                                    className="email-domain-select"
-                                    value={emailDomain}
-                                    onChange={(e) => setEmailDomain(e.target.value)}
+                            <div className="custom-input">
+                                <Mail className="input-icon" size={18} />
+                                <input
+                                    type="email"
+                                    placeholder="邮箱地址"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
                                     disabled={failedAttempts >= 5 || emailVerified}
-                                >
-                                    <option value="@qq.com">@qq.com</option>
-                                    <option value="@163.com">@163.com</option>
-                                </select>
+                                />
                             </div>
                         </div>
 
@@ -319,10 +308,9 @@ export default function Register() {
                                             onClick={sendEmailCode}
                                             disabled={countdown > 0 || failedAttempts >= 5}
                                         >
-                                            <Send size={16} />
-                                            {countdown > 0 ? `${countdown}s` : '获取验证码'}
+                                            {countdown > 0 ? `${countdown}s` : '发送'}
                                         </button>
-                                        {emailCodeSent && (
+                                        {emailCode && (
                                             <button
                                                 type="button"
                                                 className="verify-code-btn"
@@ -346,7 +334,7 @@ export default function Register() {
                                     <Shield className="input-icon" size={18} />
                                     <input
                                         type="text"
-                                        placeholder="请输入验证码"
+                                        placeholder="验证码"
                                         value={captchaInput}
                                         onChange={(e) => setCaptchaInput(e.target.value.toUpperCase())}
                                         required
@@ -354,19 +342,17 @@ export default function Register() {
                                         disabled={failedAttempts >= 5}
                                     />
                                 </div>
-                                <div className="captcha-image-wrapper">
-                                    <canvas
-                                        ref={canvasRef}
-                                        width={120}
-                                        height={40}
-                                        className="captcha-canvas"
-                                        onClick={refreshCaptcha}
-                                    />
-                                </div>
+                                <canvas
+                                    ref={canvasRef}
+                                    width={100}
+                                    height={36}
+                                    className="captcha-canvas"
+                                    onClick={refreshCaptcha}
+                                />
                             </div>
                         </div>
 
-                        {/* 服务条款同意 */}
+                        {/* 服务条款 */}
                         <div className="form-item">
                             <label className="terms-checkbox">
                                 <input
@@ -376,7 +362,7 @@ export default function Register() {
                                     disabled={failedAttempts >= 5}
                                 />
                                 <span>
-                                    我已阅读并同意
+                                    同意
                                     <span className="link-text" onClick={() => navigate('/terms')}>
                                         《服务条款》
                                     </span>
@@ -385,17 +371,9 @@ export default function Register() {
                         </div>
 
                         <button type="submit" className="login-btn" disabled={isLoading || failedAttempts >= 5}>
-                            {isLoading ? '注册中...' : failedAttempts >= 5 ? '请稍后再试' : '注 册'}
+                            {isLoading ? '注册中...' : failedAttempts >= 5 ? '请稍后再试' : '注册'}
                         </button>
                     </form>
-
-                    {/* 底部提示 */}
-                    <div className="login-footer">
-                        <p className="security-tips">
-                            <Shield size={12} style={{ display: 'inline', marginRight: '4px' }} />
-                            您的信息将被安全加密存储
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>

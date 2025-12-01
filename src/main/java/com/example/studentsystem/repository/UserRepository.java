@@ -1,7 +1,10 @@
 package com.example.studentsystem.repository;
 
+import com.example.studentsystem.model.Role;
 import com.example.studentsystem.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 // 是一个 Spring Data JPA 的 "仓库" 接口，声明了对 User 实体的持久化操作
@@ -11,4 +14,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     // 检查邮箱地址是否已存在
     boolean existsByEmail(String email);
+    
+    // 统计包含特定角色的用户数量
+    @Query("SELECT COUNT(u) FROM User u JOIN u.roles r WHERE r = :role")
+    long countByRolesContaining(@Param("role") Role role);
 }

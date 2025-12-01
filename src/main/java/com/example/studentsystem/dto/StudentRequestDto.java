@@ -3,6 +3,9 @@ package com.example.studentsystem.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Past;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
     /*
     学生请求数据传输对象（DTO）类
@@ -10,6 +13,8 @@ import java.time.LocalDate;
     包括学号、姓名、性别、出生日期、监护人手机号等
     提供getter和setter方法以访问和修改字段值
      */
+@Setter
+@Getter
 public class StudentRequestDto {  // 数据传输对象（DTO），用于接收和验证学生请求数据
     @NotBlank(message = "学号不能为空")
     @Size(max = 50)  // 验证学号最大长度为50字符
@@ -31,25 +36,10 @@ public class StudentRequestDto {  // 数据传输对象（DTO），用于接收�
     )
     private String phone;
 
-    private String address;  // ：地址
+    private String address;  // 地址
 
     //班级字段，限制最大长度
     @Size(max = 100)
     private String className;  // 班级名称
 
-    // 以下是所有字段的getter和setter方法，用于访问和修改私有字段
-    public String getStudentNo() { return studentNo; }
-    public void setStudentNo(String studentNo) { this.studentNo = studentNo; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getGender() { return gender; }
-    public void setGender(String gender) { this.gender = gender; }
-    public LocalDate getDob() { return dob; }
-    public void setDob(LocalDate dob) { this.dob = dob; }
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-    public String getClassName() { return className; }
-    public void setClassName(String className) { this.className = className; }
-}
+    }

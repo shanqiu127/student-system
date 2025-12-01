@@ -1,4 +1,3 @@
-// language: java
 package com.example.studentsystem.web;
 
 import com.example.studentsystem.security.jwt.JwtService;
@@ -14,26 +13,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+
 /**
- * AuthController
- * 角色与职责：
- * - 提供认证相关 REST 接口：注册(register) 与 登录(login)。
- * - 与 UserService 协作：注册时调用其加密密码并保存用户。
- * - 与 AuthenticationManager 协作：登录时委托 Spring Security 执行用户名+密码认证。
- * - 与 JwtService 协作：认证通过后生成 JWT，返回给前端（前端需存储并在后续请求中附加 Authorization 头）。
- * 流程概览：
- * 1. 注册：仅业务入库，不生成 token（可按需扩展）。
- * 2. 登录：
- *    - 调用 AuthenticationManager.authenticate：内部会使用 UserService.loadUserByUsername 加载用户并比对密码。
- *    - 成功后调用 JwtService.generateToken(username) 生成基于 HS256 签名的 JWT。
- *    - 返回 AuthResponse，其中包含 token。客户端后续请求需携带该 token。
- * 与后续安全链的关系：
- * - 客户端后续请求在 Header 放置 `Authorization: Bearer <token>`。
- * - JwtAuthenticationFilter(在安全配置中注册) 会使用 JwtService.validateToken 与 extractUsername 校验并解析用户。
- * - 解析成功后把认证信息放入 SecurityContext，实现无状态认证。
- * 异常处理：
- * - 注册：若用户名已存在，UserService 抛出 IllegalArgumentException，返回 400。
- * - 登录：认证失败抛出 BadCredentialsException，返回 401。
+ * AuthController - 认证控制器
+ * 核心职责：
+ * - 提供注册、登录、重置密码等认证接口
+ * - 协作组件：UserService(用户管理)、AuthenticationManager(认证)、JwtService(JWT生成)
+ * 认证流程：
+ * 1. 注册：加密密码后入库，不生成token
+ * 2. 登录：Spring Security认证通过后生成JWT返回
+ * 3. 后续请求：客户端携带 Authorization: Bearer <token>，由JwtAuthenticationFilter校验
+ * 异常：注册失败400，登录失败401
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -71,8 +61,6 @@ public class AuthController {
      * 1. 调用 userService.register：内部做唯一性检查与密码加密。
      * 2. 成功返回 200（可扩展为返回用户概要或自动登录）。
      * 3. 若用户名占用，捕获 IllegalArgumentException 返回 400。
-     * 安全注意：
-     * - 不在控制器层处理密码加密，集中在服务层统一处理。
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody AuthRequest req) {
@@ -84,20 +72,14 @@ public class AuthController {
         }
     }
 
+
     /**
      * POST /api/auth/login
-     * 功能：用户名+密码认证并签发 JWT。
-     * 输入：AuthRequest(username, password)。
+     * 功能：用户登录认证并签发 JWT。
      * 步骤：
-     * 1. 构造 UsernamePasswordAuthenticationToken 交给 AuthenticationManager。
-     *    - 内部会调用 UserService.loadUserByUsername 加载用户并使用 PasswordEncoder 校验密码。
-     * 2. 若认证通过，使用 jwtService.generateToken(username) 生成带过期时间的 token。
-     * 3. 返回 AuthResponse(token) 给客户端。
-     * 4. 若认证失败抛出 BadCredentialsException，返回 401。
-     * 后续使用：
-     * - 客户端存储该 token（通常放在内存/安全的存储中），每次调用受保护接口时在 Header 添加：
-     *   Authorization: Bearer <token>
-     * - JwtAuthenticationFilter 会解析并设置认证上下文，实现无状态访问。
+     * 1. 通过 AuthenticationManager 验证用户名密码。
+     * 2. 认证成功后生成包含用户角色的 JWT token。
+     * 3. 返回 token 给客户端，用于后续请求的 Authorization 头。
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest req) {
@@ -105,7 +87,13 @@ public class AuthController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(req.username(), req.password())
             );
-            String token = jwtService.generateToken(req.username());
+            // 加载用户信息获取角色
+            var user = userService.loadUserByUsername(req.username());
+            var roles = user.getRoles().stream()
+                    .map(Enum::name)
+                    .toList();
+            // 生成包含角色信息的 token
+            String token = jwtService.generateToken(req.username(), roles);
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(401).body("用户名或密码错误");

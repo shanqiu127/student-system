@@ -1,12 +1,18 @@
 package com.example.studentsystem.exception;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * 统一错误响应格式：{ timestamp, status, error, message, path, errors }
  */
+@Setter
+@Getter
 public class ErrorResponse {
+    // getters & setters
     private String timestamp;
     private int status;
     private String error;
@@ -29,17 +35,4 @@ public class ErrorResponse {
         this.errors = errors;
     }
 
-    // getters & setters
-    public String getTimestamp() { return timestamp; }
-    public void setTimestamp(String timestamp) { this.timestamp = timestamp; }
-    public int getStatus() { return status; }
-    public void setStatus(int status) { this.status = status; }
-    public String getError() { return error; }
-    public void setError(String error) { this.error = error; }
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
-    public String getPath() { return path; }
-    public void setPath(String path) { this.path = path; }
-    public List<String> getErrors() { return errors; }
-    public void setErrors(List<String> errors) { this.errors = errors; }
 }

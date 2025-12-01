@@ -14,7 +14,7 @@ html, body, #root {
 
 /* 登录页面背景 */
 body {
-    background: radial-gradient(circle at 50% 50%, #1a103c 0%, #000000 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #e5e7eb;
     overflow-x: hidden;
 }
@@ -39,7 +39,7 @@ body {
     overflow: hidden;
 }
 
-/* 氛围光效 */
+
 .ambient-light {
     position: absolute;
     width: 800px;
@@ -75,37 +75,30 @@ body {
 }
 
 .glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
     padding: 40px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .logo-area {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .logo-icon {
-    font-size: 36px;
-    margin-bottom: 8px;
-    filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
+    font-size: 48px;
+    margin-bottom: 12px;
 }
 
 .app-title {
-    font-size: 18px;
-    font-weight: bold;
-    letter-spacing: 0.5px;
-    color: #ffffff;
-}
-
-.app-subtitle {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    margin-top: 4px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
 }
 
 .form-item {
@@ -121,28 +114,28 @@ body {
 .custom-input input {
     width: 100%;
     padding: 12px 15px 12px 45px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: white;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    color: #1f2937;
     font-size: 14px;
     outline: none;
 }
 
 .custom-input input:focus {
-    border-color: #00f2ff;
-    background-color: rgba(0, 0, 0, 0.4);
-    box-shadow: 0 0 0 1px #00f2ff;
+    border-color: #667eea;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .custom-input input::placeholder {
-    color: rgba(255, 255, 255, 0.4);
+    color: #9ca3af;
 }
 
 .input-icon {
     position: absolute;
     left: 15px;
-    color: rgba(255, 255, 255, 0.6);
+    color: #6b7280;
     pointer-events: none;
 }
 
@@ -153,7 +146,7 @@ body {
     font-size: 12px;
     margin-bottom: 10px;
 }
-
+/*记住我样式*/
 .remember-checkbox {
     display: flex;
     align-items: center;
@@ -167,37 +160,37 @@ body {
     height: 14px;
     cursor: pointer;
 }
-
+/* 链接文本样式  */
+/* 登录页面的"忘记密码、条款链接、忘记密码 */
 .link-text {
-    color: #00f2ff;
+    color: #667eea;
     cursor: pointer;
-    transition: color 0.3s;
+    transition: color 0.2s;
 }
 
+/* 鼠标悬停效果 */
 .link-text:hover {
+    color: #764ba2;
     text-decoration: underline;
-    text-underline-offset: 4px;
 }
-
+/*登录样式*/
 .login-btn {
     width: 100%;
-    height: 48px;
-    border-radius: 12px;
+    height: 44px;
+    border-radius: 8px;
     border: none;
-    background: linear-gradient(135deg, #00f2ff 0%, #0078ff 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    font-size: 16px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    margin-top: 20px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 10px;
     cursor: pointer;
-    transition: transform 0.2s, filter 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .login-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
-    box-shadow: 0 10px 20px rgba(0, 242, 255, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .login-btn:active {
@@ -211,46 +204,32 @@ body {
 
 .login-footer {
     text-align: center;
-    margin-top: 20px;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.5);
+    margin-top: 24px;
+    font-size: 14px;
+    color: #6b7280;
 }
 
-.login-footer p {
-    margin: 0 0 10px 0;
-}
 
-.register-link {
-    margin-top: 10px;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.register-link .link-text {
-    margin-left: 8px;
-    color: #00f2ff;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.register-link .link-text:hover {
-    text-decoration: underline;
-    text-underline-offset: 4px;
+/* 链接分隔符  */
+.link-separator {
+    margin: 0 12px;
+    color: #d1d5db;
 }
 
 /* 返回登录按钮 */
 .back-to-login {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 13px;
+    color: #6b7280;
+    font-size: 14px;
     cursor: pointer;
     margin-bottom: 20px;
     transition: color 0.2s;
 }
 
 .back-to-login:hover {
-    color: #00f2ff;
+    color: #667eea;
 }
 
 /* 验证码样式 */
@@ -267,14 +246,15 @@ body {
 }
 
 .captcha-canvas {
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid #d1d5db;
     transition: border-color 0.2s;
+    background: white;
 }
 
 .captcha-canvas:hover {
-    border-color: #00f2ff;
+    border-color: #667eea;
 }
 
 .refresh-captcha-btn {
@@ -298,9 +278,9 @@ body {
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    color: rgba(255, 255, 255, 0.6);
+    color: #6b7280;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
 }
 
@@ -385,12 +365,12 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 12px 20px;
-    border: 1px solid rgba(0, 242, 255, 0.5);
-    background: rgba(0, 242, 255, 0.1);
-    color: #00f2ff;
-    border-radius: 8px;
-    font-size: 14px;
+    padding: 12px 16px;
+    border: 1px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 6px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
@@ -399,70 +379,79 @@ body {
 
 .send-code-btn:hover:not(:disabled),
 .verify-code-btn:hover:not(:disabled) {
-    background: rgba(0, 242, 255, 0.2);
-    border-color: #00f2ff;
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+    background: #667eea;
+    color: white;
 }
 
-.send-code-btn:disabled {
+.send-code-btn:disabled,
+.verify-code-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
 
 .verified-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 12px 20px;
-    background: rgba(103, 194, 58, 0.1);
-    border: 1px solid rgba(103, 194, 58, 0.5);
-    color: #67c23a;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
+    padding: 12px 16px;
+    color: #10b981;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.send-code-btn:hover:not(:disabled),
+.verify-code-btn:hover:not(:disabled) {
+    background: #667eea;
+    color: white;
+}
+
+.send-code-btn:disabled,
+.verify-code-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.verified-badge {
+    padding: 12px 16px;
+    color: #10b981;
+    font-size: 13px;
+    font-weight: 600;
     white-space: nowrap;
 }
 
 /* ===== 服务条款页面样式 ===== */
 .terms-root {
     min-height: 100vh;
-    background: radial-gradient(circle at 50% 50%, #1a103c 0%, #000000 100%);
-    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 20px;
     overflow-y: auto;
 }
 
 .terms-container {
-    max-width: 900px;
+    max-width: 800px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 16px;
     padding: 40px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
-.terms-header {
-    margin-bottom: 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 20px;
-}
-
-.terms-header h1 {
-    color: #ffffff;
+.terms-title {
+    color: #1f2937;
     font-size: 28px;
-    margin: 20px 0 0 0;
+    font-weight: 600;
+    margin: 20px 0 30px 0;
     text-align: center;
 }
 
 .back-button {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.8);
+    gap: 6px;
+    background: transparent;
+    border: 1px solid #d1d5db;
+    color: #6b7280;
     padding: 8px 16px;
     border-radius: 8px;
     cursor: pointer;
@@ -471,25 +460,25 @@ body {
 }
 
 .back-button:hover {
-    background: rgba(0, 242, 255, 0.2);
-    border-color: #00f2ff;
-    color: #00f2ff;
+    background: #f3f4f6;
+    border-color: #667eea;
+    color: #667eea;
 }
 
 .terms-content {
-    color: rgba(255, 255, 255, 0.85);
+    color: #4b5563;
     line-height: 1.8;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .terms-content section {
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .terms-content h2 {
-    color: #00f2ff;
-    font-size: 20px;
-    margin-bottom: 15px;
+    color: #667eea;
+    font-size: 18px;
+    margin-bottom: 12px;
     font-weight: 600;
 }
 
@@ -498,21 +487,15 @@ body {
     text-align: justify;
 }
 
-.terms-content ul {
-    margin: 10px 0;
-    padding-left: 30px;
+.terms-link {
+    color: #667eea;
+    text-decoration: none;
+    transition: color 0.2s;
 }
 
-.terms-content li {
-    margin: 8px 0;
-}
-
-.terms-footer-section {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 13px;
+.terms-link:hover {
+    color: #764ba2;
+    text-decoration: underline;
 }
 
 /* ===== 学生管理页面样式 ===== */
@@ -542,7 +525,7 @@ body {
     align-items: center;
     gap: 10px;
 }
-
+ /*用户菜单*/
 .user-menu {
     position: relative;
     cursor: pointer;
@@ -557,7 +540,7 @@ body {
 .user-menu:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
-
+/*头像*/
 .avatar {
     width: 32px;
     height: 32px;
@@ -568,7 +551,7 @@ body {
     justify-content: center;
     font-weight: bold;
 }
-
+/*下拉菜单*/
 .dropdown-menu {
     position: absolute;
     top: 100%;
@@ -580,7 +563,7 @@ body {
     min-width: 140px;
     z-index: 1000;
 }
-
+/*菜单项*/
 .menu-item {
     padding: 10px 16px;
     color: #333;
@@ -645,7 +628,7 @@ body {
     position: relative;
     width: 240px;
 }
-
+/*搜索框样式*/
 .search-prefix-icon {
     position: absolute;
     left: 12px;
@@ -848,7 +831,7 @@ body {
     color: #f78989;
 }
 
-/* 分页容器 */
+/* 分页*/
 .pagination-container {
     display: flex;
     justify-content: flex-end;

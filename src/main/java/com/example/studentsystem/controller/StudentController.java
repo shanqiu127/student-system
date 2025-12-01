@@ -2,10 +2,12 @@ package com.example.studentsystem.controller;
 
 import com.example.studentsystem.dto.StudentRequestDto;  // 导入请求DTO，用于接收学生数据
 import com.example.studentsystem.dto.StudentResponseDto;  // 导入响应DTO，用于返回学生数据
+import com.example.studentsystem.model.User;  // 导入User实体
 import com.example.studentsystem.service.StudentService;  // 导入服务接口，用于业务逻辑
 import org.springframework.data.domain.Page;  // 导入Page类，用于分页结果
 import org.springframework.data.domain.Pageable;  // 导入Pageable接口，用于分页参数
 import org.springframework.http.ResponseEntity;  // 导入ResponseEntity，用于构建HTTP响应
+import org.springframework.security.core.annotation.AuthenticationPrincipal;  // 导入注解，用于获取当前登录用户
 import org.springframework.web.bind.annotation.*;  // 导入Spring Web注解，用于REST API
 import org.springframework.web.multipart.MultipartFile;
 import org.apache.poi.ss.usermodel.*;
@@ -33,12 +35,17 @@ public class StudentController {
     }
     // 定义分页响应记录，包含内容、总元素数、总页数和当前页码
     public record PagedResponse<T>(List<T> content, long totalElements, int totalPages, int pageNumber) {}
+
     @GetMapping
     // 处理GET请求，列出学生，支持分页和过滤
     public PagedResponse<StudentResponseDto> list(
+
+            // @RequestParam注解用于从HTTP请求的查询参数中提取值
             @RequestParam(required = false) String studentNo,
-            Pageable pageable) {
-        Page<StudentResponseDto> page = service.list(pageable, studentNo);
+            Pageable pageable,
+            @AuthenticationPrincipal User currentUser) {
+            // @AuthenticationPrincipal 注解用于获取当前已认证的用户对象
+        Page<StudentResponseDto> page = service.list(pageable, studentNo, currentUser);
         // 自定义返回分页数据结构
         return new PagedResponse<>(
                 page.getContent(),
@@ -49,40 +56,54 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")  // 处理GET请求，根据ID获取单个学生
-    public ResponseEntity<StudentResponseDto> get(@PathVariable Long id) {
-        // 调用服务层获取学生，若存在返回200 OK，否则返回404 Not Found
-        return service.getById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<StudentResponseDto> get(
+
+            @PathVariable Long id,  // @PathVariable注解用于从URL路径中提取变量值，此处提取学生ID
+            @AuthenticationPrincipal User currentUser) {
+        // 调用服务层获取学生，若存在返回200 ，否则返回404
+        return service.getById(id, currentUser).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping  // 处理POST请求，创建新学生
-    public ResponseEntity<StudentResponseDto> create(@Valid @RequestBody StudentRequestDto dto) {
-        // 使用@Valid验证请求体，调用服务层创建学生，返回201 Created
-        StudentResponseDto created = service.create(dto);
+    public ResponseEntity<StudentResponseDto> create(
+            // @Valid注解用于验证请求体，@RequestBody注解用于接收请求体
+            @Valid @RequestBody StudentRequestDto dto,
+            @AuthenticationPrincipal User currentUser) {
+        // 调用服务层创建学生，返回201 Created
+        StudentResponseDto created = service.create(dto, currentUser);
         return ResponseEntity.ok(created);
     }
 
     @PutMapping("/{id}")  // 处理PUT请求，更新现有学生
-    public ResponseEntity<StudentResponseDto> update(@PathVariable Long id, @Valid @RequestBody StudentRequestDto dto) {
+    public ResponseEntity<StudentResponseDto> update(
+            @PathVariable Long id,
+            @Valid @RequestBody StudentRequestDto dto,
+            @AuthenticationPrincipal User currentUser) {
         // 使用@Valid验证请求体，调用服务层更新学生，若成功返回200 OK，否则返回404 Not Found
-        return service.update(id, dto).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return service.update(id, dto, currentUser).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")  // 处理DELETE请求，删除学生
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User currentUser) {
         // 调用服务层删除学生，若不存在返回404 Not Found，否则返回204 No Content
-        if (!service.delete(id)) return ResponseEntity.notFound().build();
+        if (!service.delete(id, currentUser)) return ResponseEntity.notFound().build();
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/batch")  // 处理DELETE请求，批量删除学生
-    public ResponseEntity<String> batchDelete(@RequestBody List<Long> ids) {
+    public ResponseEntity<String> batchDelete(
+            //批量-list列表
+            @RequestBody List<Long> ids,
+            @AuthenticationPrincipal User currentUser) {
         if (ids == null || ids.isEmpty()) {
             return ResponseEntity.badRequest().body("删除列表不能为空");
         }
         int deleted = 0;
-        // 遍历ID列表，逐个删除
+        // 遍历id列表
         for (Long id : ids) {
-            if (service.delete(id)) {
+            if (service.delete(id, currentUser)) {
                 deleted++;
             }
         }
@@ -90,14 +111,17 @@ public class StudentController {
     }
     // 处理POST请求，支持Excel一键导入学生数据
     @PostMapping("/import")
-    public ResponseEntity<String> importStudents(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> importStudents(
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal User currentUser) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("文件不能为空");
         }
         try (InputStream in = file.getInputStream(); Workbook workbook = WorkbookFactory.create(in)) {
             Sheet sheet = workbook.getSheetAt(0);
             int imported = 0;
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) { // 从第2行开始，跳过表头
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {// 从第2行开始，跳过表头
+                // 获取当前行
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
                 
@@ -134,7 +158,7 @@ public class StudentController {
                 if (dto.getStudentNo() == null || dto.getStudentNo().isBlank()) {
                     continue; // 学号必填
                 }
-                service.create(dto);
+                service.create(dto, currentUser);
                 imported++;
             }
             return ResponseEntity.ok("成功导入 " + imported + " 条学生记录");
@@ -181,7 +205,7 @@ public class StudentController {
             headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
             headers.setContentLength(bytes.length);
             headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
-
+            // 返回响应
             return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

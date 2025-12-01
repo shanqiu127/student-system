@@ -12,9 +12,10 @@ import ResetPassword from './pages/ResetPassword'; // 重置密码页面
 import Terms from './pages/Terms'; // 服务条款页面
 import Dashboard from './pages/Dashboard'; // 仪表盘页面（需要认证）
 import Students from './pages/Students'; // 学生管理页面（需要认证）
+import AdminDashboard from './pages/AdminDashboard'; // 管理员控制台（需要 ROLE_ADMIN）
 
 // ============ 导入工具和布局 ============
-import { getToken } from './utils/auth'; // 从本地存储获取 JWT Token
+import { getToken, isAdmin } from './utils/auth'; // 从本地存储获取 JWT Token 和角色判断
 import MainLayout from './layouts/MainLayout'; // 主布局组件（包含导航栏、侧边栏等）
 
 /**
@@ -27,6 +28,27 @@ function PrivateRoute({ children }) {
     const token = getToken();
     // 如果 Token 存在则允许访问，否则重定向到登录页
     return token ? children : <Navigate to="/login" replace />;
+}
+
+/**
+ * RoleBasedRedirect 组件 - 根据用户角色重定向
+ * 管理员跳转到 /admin，普通用户跳转到 /app/students
+ * 未登录用户跳转到 /login
+ */
+function RoleBasedRedirect() {
+    const token = getToken();
+    
+    if (!token) {
+        // 未登录，跳转到登录页
+        return <Navigate to="/login" replace />;
+    }
+    
+    // 已登录，根据角色跳转
+    if (isAdmin()) {
+        return <Navigate to="/admin" replace />;
+    } else {
+        return <Navigate to="/app/students" replace />;
+    }
 }
 
 /**
@@ -70,7 +92,17 @@ function App() {
                 <Route path="/reset-password" element={<ResetPassword />} /> {/* 重置密码页面 */}
                 <Route path="/terms" element={<Terms />} /> {/* 服务条款页面 */}
                 
-                {/* 受保护的路由 - 需要有效的 JWT Token */}
+                {/* 管理员独立路由 - 不使用 MainLayout */}
+                <Route
+                    path="/admin"
+                    element={
+                        <PrivateRoute>
+                            <AdminDashboard />
+                        </PrivateRoute>
+                    }
+                />
+                
+                {/* 普通用户受保护的路由 - 需要有效的 JWT Token */}
                 <Route
                     path="/app/*" // 所有 /app 路径下的路由都需要认证
                     element={
@@ -86,8 +118,8 @@ function App() {
                     <Route index element={<Navigate to="dashboard" replace />} />
                 </Route>
                 
-                {/* 通配符路由 - 捕获所有其他路径，重定向到仪表盘 */}
-                <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
+                {/* 通配符路由 - 捕获所有其他路径，根据角色智能重定向 */}
+                <Route path="*" element={<RoleBasedRedirect />} />
             </Routes>
         </BrowserRouter>
     );

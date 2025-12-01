@@ -1,6 +1,8 @@
 package com.example.studentsystem.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,9 +15,11 @@ import java.util.stream.Collectors;
  * - 使用 @ElementCollection 存储角色集合（枚举以字符串形式存储）。
  * - getAuthorities() 将枚举转换为 SimpleGrantedAuthority 供 Spring Security 使用。
  */
+@Setter
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 数据库@ID设为主键，@GeneratedValu自增
@@ -26,6 +30,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password; // 已加密的密码
 
+    @Getter
     @Column(unique = true)
     private String email; // 邮箱地址（可选）
 
@@ -35,6 +40,7 @@ public class User implements UserDetails {
      * - @CollectionTable(name = "user_roles")：枚举集合将映射到独立表 user_roles。
      * - @Enumerated(EnumType.STRING)：以枚举名字符串存储 （如 "ROLE_ADMIN"）。
      */
+    @Getter
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles")
     @Enumerated(EnumType.STRING)
@@ -51,12 +57,6 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
     /**
      * 将roles集合返回可识别的 GrantedAuthority 列表。
      * GrantedAuthority 列表包含用户的权限信息
@@ -71,13 +71,9 @@ public class User implements UserDetails {
     // 实现 UserDetails 接口的其他方法
     @Override public String getPassword(){ return password; }
     @Override public String getUsername(){ return username; }
-    @Override public boolean isAccountNonExpired(){ return true; } // 可根据需要改为字段驱动
+    @Override public boolean isAccountNonExpired(){ return true; }
     @Override public boolean isAccountNonLocked(){ return true; }
     @Override public boolean isCredentialsNonExpired(){ return true; }
     @Override public boolean isEnabled(){ return true; }
 
-    public void setUsername(String username){ this.username = username; }
-    public void setPassword(String password){ this.password = password; }
-    public Set<Role> getRoles(){ return roles; }
-    public void setRoles(Set<Role> roles){ this.roles = roles; }
 }

@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import api from '../services/api';
-import { saveToken, saveUsername, clearToken } from '../utils/auth';
+import { saveToken, clearToken, isAdmin } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { User, Lock } from 'lucide-react';
-
-// 登录页面组件：对接后端登录接口
+// 简约风格登录页面
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const [rememberMe, setRememberMe] = useState(false);
 
     // 处理登录
     async function doLogin(e) {
@@ -30,11 +28,15 @@ export default function Login() {
                 setIsLoading(false);
                 return;
             }
-            saveToken(token);
-            saveUsername(username); // 保存用户名
+            saveToken(token);  // 保存 token，会自动解析并保存用户名和角色
             toast.success(`登录成功，欢迎回来！`);
-            // 登录成功后跳转到主页面
-            navigate('/app/students');
+            
+            // 根据用户角色跳转到不同页面
+            if (isAdmin()) {
+                navigate('/admin');  // 管理员跳转到独立的管理控制台
+            } else {
+                navigate('/app/students');  // 普通用户跳转到学生管理页面
+            }
         } catch (error) {
             const errorMsg = error?.response?.data || '用户名或密码错误';
             toast.error(typeof errorMsg === 'string' ? errorMsg : '登录失败');
@@ -43,23 +45,16 @@ export default function Login() {
         }
     }
 
-    // 渲染登录表单 - 玻璃态深色风格
+    // 渲染简约登录表单
     return (
         <div className="login-root">
-            {/* 氛围光效 */}
-            <div className="ambient-light" />
-            <div className="ambient-light-2" />
-
             <div className="login-wrapper">
                 <div className="glass-card">
-                    {/* Logo 区域 */}
                     <div className="logo-area">
                         <div className="logo-icon">🎓</div>
-                        <div className="app-title">学生信息管理系统</div>
-                        <div className="app-subtitle">欢迎回来，请登录您的账户</div>
+                        <h1 className="app-title">学生管理系统</h1>
                     </div>
-
-                    {/* 登录表单 */}
+                    {/*用户名区域*/}
                     <form onSubmit={doLogin}>
                         <div className="form-item">
                             <div className="custom-input">
@@ -73,7 +68,7 @@ export default function Login() {
                                 />
                             </div>
                         </div>
-                        {/*密码输入框*/}
+                        {/*密码区域*/}
                         <div className="form-item">
                             <div className="custom-input">
                                 <Lock className="input-icon" size={18} />
@@ -86,33 +81,16 @@ export default function Login() {
                                 />
                             </div>
                         </div>
-                         {/*记住我*/}
-                        <div className="form-options">
-                            <label className="remember-checkbox">
-                                <input
-                                    type="checkbox"
-                                    checked={rememberMe}
-                                    onChange={(e) => setRememberMe(e.target.checked)}
-                                />
-                                <span>记住我</span>
-                            </label>
-                            <span className="link-text" onClick={() => navigate('/reset-password')}>忘记密码?</span>
-                        </div>
 
                         <button type="submit" className="login-btn" disabled={isLoading}>
-                            {isLoading ? '登录中...' : '登 录'}
+                            {isLoading ? '登录中...' : '登录'}
                         </button>
                     </form>
-
-                    {/* 底部提示 */}
+                    {/*底部区域*/}
                     <div className="login-footer">
-                        <p>默认管理员账号：admin / admin</p>
-                        <div className="register-link">
-                            还没有账号？
-                            <span className="link-text" onClick={() => navigate('/register')}>
-                                立即注册
-                            </span>
-                        </div>
+                        <span className="link-text" onClick={() => navigate('/register')}>注册账号</span>
+                        <span className="link-separator">·</span>
+                        <span className="link-text" onClick={() => navigate('/reset-password')}>忘记密码</span>
                     </div>
                 </div>
             </div>

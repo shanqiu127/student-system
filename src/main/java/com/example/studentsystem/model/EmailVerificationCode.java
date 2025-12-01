@@ -27,7 +27,7 @@ public class EmailVerificationCode {
     /**
      * 邮箱地址（小写存储）
      */
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String email;
 
     /**

@@ -12,6 +12,7 @@ import jakarta.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -92,15 +93,18 @@ public class JwtService {
 
     /**
      * @param username 作为 JWT 的 Subject (主体用户)
-     * @return 已签名并包含过期时间的紧凑型 JWT 字符串
+     * @param roles 用户的角色列表
+     * @return 已签名并包含过期时间和角色信息的紧凑型 JWT 字符串
      * - 创建当前时间:now;过期时间:exp
+     * - 在 claims 中添加角色信息
      * -构建前端返回的token
     */
-    public String generateToken(String username) {
+    public String generateToken(String username, List<String> roles) {
         Date now = new Date();
         Date exp = new Date(now.getTime() + jwtExpirationMs);
         return Jwts.builder()
                 .setSubject(username)
+                .claim("roles", roles)  // 添加角色信息到 JWT
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -122,6 +126,33 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    /**
+     * extractRoles
+     * @param token 外部传入的 JWT
+     * @return token 中的角色列表
+     * 说明:
+     * - 从 JWT claims 中提取角色信息
+     * - 若不存在则返回空列表
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> extractRoles(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            Object rolesObj = claims.get("roles");
+            if (rolesObj instanceof List) {
+                return (List<String>) rolesObj;
+            }
+            return List.of();
+        } catch (JwtException ex) {
+            logger.debug("提取角色失败: {}", ex.getMessage());
+            return List.of();
+        }
     }
 
     /**

@@ -6,8 +6,7 @@ import { Mail, Lock, Shield, Send, ArrowLeft } from 'lucide-react';
 
 // 重置密码页面组件
 export default function ResetPassword() {
-    const [emailPrefix, setEmailPrefix] = useState(''); // 邮箱前缀
-    const [emailDomain, setEmailDomain] = useState('@qq.com'); // 邮箱域名
+    const [email, setEmail] = useState(''); // 完整邮箱地址
     const [emailCode, setEmailCode] = useState(''); // 邮箱验证码
     const [newPassword, setNewPassword] = useState(''); // 新密码
     const [confirmPassword, setConfirmPassword] = useState(''); // 确认密码
@@ -27,27 +26,32 @@ export default function ResetPassword() {
 
     // 发送邮箱验证码
     const sendEmailCode = async () => {
-        if (!emailPrefix.trim()) {
+        if (!email.trim()) {
             toast.error('请输入邮箱地址');
             return;
         }
 
-        const fullEmail = emailPrefix.trim() + emailDomain;
-
+        // 验证邮箱格式
+        const emailPattern = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(email.trim())) {
+            toast.error('请输入正确的邮箱格式');
+            return;
+        }
+        // 发送验证码
         try {
             const response = await api.post('/api/auth/email/code/send', { 
-                email: fullEmail,
+                email: email.trim(),
                 scene: 'reset_password' // 重置密码场景
             });
             if (response.data.code === 0) {
-                toast.success('验证码已发送到您的邮箱，请在 5 分钟内完成验证');
+                toast.success('验证码已发送到您的邮箱,请在 5 分钟内完成验证');
                 setEmailCodeSent(true);
                 setCountdown(60); // 60秒倒计时
             } else {
                 toast.error(response.data.message || '验证码发送失败');
             }
         } catch (error) {
-            const errorMsg = error?.response?.data?.message || '验证码发送失败，请稍后重试';
+            const errorMsg = error?.response?.data?.message || '验证码发送失败,请稍后重试';
             toast.error(errorMsg);
         }
     };
@@ -59,23 +63,21 @@ export default function ResetPassword() {
             return;
         }
 
-        const fullEmail = emailPrefix.trim() + emailDomain;
-
         try {
             const response = await api.post('/api/auth/email/code/verify', {
-                email: fullEmail,
+                email: email.trim(),
                 code: emailCode.trim(),
                 scene: 'reset_password' // 指定场景为重置密码
             });
 
             if (response.data.code === 0) {
-                toast.success('邮箱验证成功！');
+                toast.success('邮箱验证成功!');
                 setEmailVerified(true);
             } else {
                 toast.error(response.data.message || '验证码错误');
             }
         } catch (error) {
-            const errorMsg = error?.response?.data?.message || '验证失败，请重试';
+            const errorMsg = error?.response?.data?.message || '验证失败,请重试';
             toast.error(errorMsg);
         }
     };
@@ -85,8 +87,8 @@ export default function ResetPassword() {
         e.preventDefault();
 
         // 验证输入
-        if (!emailPrefix || !emailCode || !newPassword || !confirmPassword) {
-            toast.error('请填写所有必填项');
+        if (!email || !emailCode || !newPassword || !confirmPassword) {
+            toast.error('请先填写所有项');
             return;
         }
 
@@ -116,11 +118,10 @@ export default function ResetPassword() {
         }
 
         setIsLoading(true);
-
+        // 发送重置密码请求
         try {
-            const fullEmail = emailPrefix.trim() + emailDomain;
             const response = await api.post('/api/auth/reset-password', {
-                email: fullEmail,
+                email: email.trim(),
                 code: emailCode.trim(),
                 newPassword: newPassword
             });
@@ -132,7 +133,7 @@ export default function ResetPassword() {
             }, 1000);
         } catch (error) {
             const errorMsg = error?.response?.data || '重置密码失败';
-            toast.error(typeof errorMsg === 'string' ? errorMsg : '重置密码失败，请稍后重试');
+            toast.error(typeof errorMsg === 'string' ? errorMsg : '重置密码失败,请稍后重试');
             setIsLoading(false);
         }
     }
@@ -162,27 +163,16 @@ export default function ResetPassword() {
                     <form onSubmit={doResetPassword}>
                         {/* 邮箱输入 */}
                         <div className="form-item">
-                            <div className="email-input-group">
-                                <div className="custom-input" style={{ flex: 2 }}>
-                                    <Mail className="input-icon" size={18} />
-                                    <input
-                                        type="text"
-                                        placeholder="邮箱"
-                                        value={emailPrefix}
-                                        onChange={(e) => setEmailPrefix(e.target.value)}
-                                        required
-                                        disabled={emailVerified}
-                                    />
-                                </div>
-                                <select
-                                    className="email-domain-select"
-                                    value={emailDomain}
-                                    onChange={(e) => setEmailDomain(e.target.value)}
+                            <div className="custom-input">
+                                <Mail className="input-icon" size={18} />
+                                <input
+                                    type="email"
+                                    placeholder="邮箱地址"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
                                     disabled={emailVerified}
-                                >
-                                    <option value="@qq.com">@qq.com</option>
-                                    <option value="@163.com">@163.com</option>
-                                </select>
+                                />
                             </div>
                         </div>
 

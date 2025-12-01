@@ -1,111 +1,172 @@
 # 学生信息管理系统
-- 后端：Spring Boot（Java）
-  入口：src/main/java/com/example/studentsystem/StudentSystemApplication.java。
-  依赖与构建：Maven，pom.xml 管理依赖与插件。
-  常见分层：controller/、service/、repository/、model/、dto/、mapper/、exception/、security/（见 src/main/java/... 目录）。
-  配置：src/main/resources/application.properties 与 application-dev.properties 控制环境配置。
-  异常处理：项目使用 @RestControllerAdvice 类（如 exception 包下的 GlobalExceptionHandler / ErrorResponse）统一返回 JSON 给前端（无需前端直接引用）。
-  持久层：Spring Data JPA（repository 层）或类似 ORM（通过 repository 包和实体 model 可见），数据库连接由 application*.properties 配置。
-  安全：存在 security/ 包，通常使用 Spring Security（鉴权/会话/JWT 等在该包实现）。
-  前端：React + Vite（现代前端）
-  源码：frontend/src/，入口 frontend/src/main.jsx。
-  页面与组件：frontend/src/pages/、frontend/src/components/（例：StudentForm.jsx）。
-  服务层：frontend/src/services/api.js 封装 fetch/axios 请求与后端 ErrorResponse 的统一处理。
-  工具：frontend/src/utils/auth.js 用于前端鉴权逻辑。
-  构建工具与脚本：frontend/package.json、vite.config.js（开发 npm install + npm run dev，生产构建 npm run build）。
-  打包与产物：后端打包为可执行 JAR，生成在 target/（如 student-system-0.0.1-SNAPSHOT.jar）。
-  测试：JUnit 测试类位于 test/，构建报告在 target/surefire-reports/。
-  常见数据交互与错误处理流程：前端通过 REST 调用后端 API（/api/...），后端返回 HTTP 状态码与 JSON（统一 ErrorResponse），前端在 api.js 中拦截并展示错误或表单字段错误。
-  简短总结：这是一个典型的 Java Spring Boot + React（Vite）全栈项目，Maven 管理后端依赖与构建，前端使用 Vite + React 进行开发与打包，后端负责 REST API、数据持久化与安全
-## 项目概览
 
-根目录结构（简要）：
+一个基于 **Spring Boot 3.5.7 + React** 的前后端分离学生管理系统，支持用户认证、学生信息管理、数据隔离、角色权限控制等功能。
+
+## 🎯 核心特性
+
+- ✅ **用户认证**：JWT + Spring Security，邮箱验证码注册
+- ✅ **学生管理**：CRUD 操作、Excel 导入导出、按学号搜索
+- ✅ **数据隔离**：每个用户独立管理自己的学生数据
+- ✅ **角色控制**：管理员（ROLE_ADMIN）和普通用户（ROLE_USER）
+- ✅ **待办事项**：简单的 Todo 管理功能
+- ✅ **管理员控制台**：系统统计数据展示
+
+## 📚 技术栈
+
+### 后端
+- **Spring Boot** 3.5.7
+- **Spring Data JPA** + **Hibernate**
+- **Spring Security** + **JWT** (JJWT 0.11.5)
+- **MySQL 8.0** (生产) / **H2** (测试)
+- **Apache POI** 5.2.5 (Excel)
+- **Spring Boot Mail** (邮箱验证)
+- **Maven** (构建工具)
+- **Java 17**
+
+### 前端
+- **React** 18.2
+- **React Router** 6.14
+- **Axios** 1.5
+- **Vite** 5.0
+- **Lucide React** (图标)
+- **React Hot Toast** (通知)
+
+## 📖 详细文档
+
+- **后端文档**：[src/main/java/com/example/back-README.md](src/main/java/com/example/back-README.md)
+- **前端文档**：[frontend/frontend-README.md](frontend/frontend-README.md)
+- **API 接口**：[API文档.md](API文档.md)
+## 📁 项目结构
 
 ```
 student-system/
-├─ .gitignore
-├─ pom.xml
-├─ mvnw
-├─ frontend/                     # 前端 React + Vite 项目
-│  ├─ index.html
-│  ├─ package.json
-│  ├─ vite.config.js
-│  └─ src/
-│     ├─ main.jsx
-│     ├─ styles.css
-│     ├─ components/
-│     │  └─ StudentForm.jsx
-│     ├─ pages/
-│     │  ├─ Login.jsx
-│     │  └─ Students.jsx
-│     ├─ services/
-│     │  └─ api.js                # axios 实例，配置后端 baseURL
-│     └─ utils/
-│        └─ auth.js               # token 存取等工具
-├─ src/                          # 后端 Java 源码
-│  ├─ main/
-│  │  ├─ java/com/example/studentsystem/
-│  │  │  ├─ StudentSystemApplication.java
-│  │  │  ├─ controller/
-│  │  │  ├─ dto/
-│  │  │  ├─ exception/
-│  │  │  ├─ mapper/
-│  │  │  ├─ model/
-│  │  │  ├─ repository/
-│  │  │  ├─ security/
-│  │  │  └─ service/
-│  │  └─ resources/
-│  │     ├─ application.properties         # 生产/默认配置
-│  │     └─ application-dev.properties     # 开发配置（用于 H2）
-└─ target/                       # Maven 构建输出
+├── frontend/                    # 前端项目
+│   ├── src/
+│   │   ├── pages/              # 页面组件（Login、Register、Students 等）
+│   │   ├── components/         # 可复用组件
+│   │   ├── services/           # API 服务封装
+│   │   ├── utils/              # 工具函数（auth、captcha 等）
+│   │   └── main.jsx            # 应用入口
+│   ├── package.json
+│   └── vite.config.js
+├── src/main/java/com/example/studentsystem/
+│   ├── controller/             # REST 控制器
+│   ├── service/                # 业务逻辑层
+│   ├── repository/             # 数据访问层
+│   ├── model/                  # 实体类
+│   ├── dto/                    # 数据传输对象
+│   ├── security/               # 安全相关（JWT、过滤器）
+│   ├── exception/              # 异常处理
+│   └── StudentSystemApplication.java  # 应用入口
+├── src/main/resources/
+│   ├── application.properties          # MySQL 生产配置
+│   └── application-dev.properties      # H2 测试配置
+├── pom.xml                     # Maven 配置
+└── target/                     # 构建输出
 ```
+
+## 🚀 快速开始
+
+### 前端启动
+
+```powershell
+# 进入前端目录
+cd frontend
+
+# 安装依赖（首次运行）
+npm install
+
+# 启动开发服务器
+npm run dev
+```
+
+前端运行在：`http://localhost:3000`
+
+**环境变量**（可选）：
+```powershell
+# 配置后端地址（默认 http://localhost:8080）
+$env:VITE_API_BASE_URL="http://localhost:8080"
+npm run dev
+```
+### 后端启动
+
+#### 方式一：Maven 直接运行（推荐）
+
+**生产环境（MySQL，端口 8080）**
+```powershell
+# 在 PowerShell 中
+mvn spring-boot:run
+```
+
+**测试环境（H2，端口 8081）**
+```bash
+# 在 WSL 中
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+#### 方式二：JAR 包运行
+
+**1. 构建项目**
+```powershell
+mvn clean package -DskipTests
+```
+
+**2. 运行 JAR**
+
+生产环境（MySQL）：
+```powershell
+java -jar target\student-system-0.0.1-SNAPSHOT.jar
+```
+
+测试环境（H2）：
+```bash
+java -jar target/student-system-0.0.1-SNAPSHOT.jar \
+  --spring.profiles.active=dev
+```
+
+### 数据库配置
+
+**MySQL**（需先创建数据库）：
+```sql
+CREATE DATABASE sis_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+然后在 `application.properties` 中配置连接信息。
+
+**H2**：无需额外配置，自动使用内存数据库。
+
+## 🔑 默认账户
+
+系统启动时会自动创建管理员账户：
+- **用户名**：`admin`
+- **密码**：`admin123`
+- **角色**：ROLE_ADMIN
+
+## 🌐 访问地址
+
+- **前端**：http://localhost:3000
+- **后端 API**：http://localhost:8080（MySQL）或 http://localhost:8081（H2）
+- **H2 控制台**：http://localhost:8081/h2-console（测试环境）
+
+## 📝 开发说明
+
+1. **配置文件**：
+   - `application.properties`：MySQL 生产环境
+   - `application-dev.properties`：H2 测试环境
+   - **注意**：修改配置文件时只能追加，不得删除原有配置
+
+2. **数据隔离**：学生数据按用户隔离，每个用户只能管理自己的学生
+
+3. **角色权限**：
+   - `ROLE_USER`：普通用户，访问 `/app/*` 路由
+   - `ROLE_ADMIN`：管理员，访问 `/admin` 独立路由
+
+4. **邮件配置**：需在 `application.properties` 中配置 SMTP 信息才能使用注册功能
+
+## 📄 许可
+
+本项目仅供学习交流使用
+
 ---
 
-## 前端（Frontend）说明
-
-- 技术：React + Vite
-- 入口：`frontend/src/main.jsx`
-- 与后端交互的地方：`frontend/src/services/api.js`，其会从环境变量读取后端 baseURL（Vite 环境变量名为 `VITE_API_BASE_URL`）。
-- 开发运行（在 PowerShell 中）：
-
-```powershell
-Set-Location 'D:\student-system\frontend'
-$env:VITE_API_BASE_URL="http://localhost:8081"; npm run dev
-# 或808端口：
-$env:VITE_API_BASE_URL="http://localhost:8080"; npm run dev
-```
-
-- Vite dev server 默认端口通常为 3000，打开浏览器访问 http://localhost:3000
-## 后端（Backend）运行说明
-
-项目支持两种常见的本地运行配置：在开发时使用内存 H2 数据库（方便快速调试），或连接本地 MySQL（用于更真实的数据持久化）。下面给出常用命令示例。
-
-1) 在 WSL  下使用 H2（端口 8081）：
-
-```bash
-# 在 WSL/bash 中（H2，内存数据库，适合快速调试）
-java -jar target/student-system-0.0.1-SNAPSHOT.jar \
-  --spring.datasource.url=jdbc:h2:mem:testdb \
-  --spring.datasource.driver-class-name=org.h2.Driver \
-  --spring.datasource.username=sa \
-  --spring.datasource.password= \
-  --spring.jpa.hibernate.ddl-auto=update \
-  --spring.jpa.database-platform=org.hibernate.dialect.H2Dialect \
-  --spring.h2.console.enabled=true \
-  --spring.h2.console.path=/h2-console \
-  --server.port=8081
-```
-
-2) 在 PowerShell 中使用本地 MySQL（端口 8080）
-
-```powershell
-Set-Location 'D:\student-system'
-java -jar target\student-system-0.0.1-SNAPSHOT.jar \
-```
-
-
-
-
-
-
-
+**联系方式**：3148338348@qq.com
