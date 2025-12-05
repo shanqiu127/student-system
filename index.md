@@ -71,22 +71,18 @@ student-system/
 
 ```powershell
 # 进入前端目录
-cd frontend
+Set-Location D:\student-system\frontend
 
 # 安装依赖（首次运行）
 npm install
 
 # 启动开发服务器
-npm run dev
+npm run dev (8081端口)   # 启动开发服务器
+npm run build (8080端口)   # 启动生产服务器
 ```
 
 前端运行在：`http://localhost:3000`
 
-**环境变量**（可选）：
-```powershell
-# 配置后端地址（默认 http://localhost:8080）
-$env:VITE_API_BASE_URL="http://localhost:8080"
-npm run dev
 ```
 ### 后端启动
 
@@ -137,10 +133,12 @@ CREATE DATABASE sis_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 ## 🔑 默认账户
 
-系统启动时会自动创建管理员账户：
+**测试环境（H2）** 启动时会自动创建管理员账户：
 - **用户名**：`admin`
 - **密码**：`admin123`
 - **角色**：ROLE_ADMIN
+
+**生产环境（MySQL）** 已禁用自动创建功能，需手动注册管理员账户。
 
 ## 🌐 访问地址
 

@@ -51,12 +51,15 @@ export default function StudentForm({ onSubmit, onCancel, initialStudent }) {
         if (phone && !/^1\d{10}$/.test(phone)) {
             newErrors.phone = '监护人手机号必须是以1开头的11位数字';
         }
-        // 出生日期：非必填，但如果填了需要是过去的日期
+        // 出生日期：非必填，但如果填了需要在2000年到当前日期之间
         if (dob) {
             const dobDate = new Date(dob);
             const today = new Date();
+            const minDate = new Date('2000-01-01');
             if (dobDate >= today) {
                 newErrors.dob = '出生日期必须是过去的日期';
+            } else if (dobDate < minDate) {
+                newErrors.dob = '出生日期不能早于2000年';
             }
         }
         setErrors(newErrors);
@@ -151,6 +154,40 @@ export default function StudentForm({ onSubmit, onCancel, initialStudent }) {
                                     type="date"
                                     value={dob}
                                     onChange={(e) => setDob(e.target.value)}
+                                    onWheel={(e) => {
+                                        // 高灵敏度滚轮：每次滚动增减1年，快速滚动时按月调整
+                                        e.preventDefault();
+                                        if (!dob) return;
+                                        const currentDate = new Date(dob);
+                                        
+                                        // 根据滚动速度动态调整：快速滚动=按年，慢速滚动=按月
+                                        const isQuickScroll = Math.abs(e.deltaY) > 50;
+                                        let delta;
+                                        
+                                        if (isQuickScroll) {
+                                            // 快速滚动：每次1年
+                                            delta = e.deltaY > 0 ? -365 : 365;
+                                        } else {
+                                            // 慢速滚动：每次3个月
+                                            delta = e.deltaY > 0 ? -90 : 90;
+                                        }
+                                        
+                                        currentDate.setDate(currentDate.getDate() + delta);
+                                        const newDate = currentDate.toISOString().split('T')[0];
+                                        
+                                        // 限制在2000年到今天之间
+                                        const minDate = '2000-01-01';
+                                        const maxDate = new Date().toISOString().split('T')[0];
+                                        if (newDate >= minDate && newDate <= maxDate) {
+                                            setDob(newDate);
+                                        } else if (newDate < minDate) {
+                                            setDob(minDate); // 自动设置为最小值
+                                        } else if (newDate > maxDate) {
+                                            setDob(maxDate); // 自动设置为最大值
+                                        }
+                                    }}
+                                    // 最小可选日期: 2000年1月1日
+                                    min="2000-01-01"
                                     // 最大可选日期: 当前日期今天
                                     max={new Date().toISOString().split('T')[0]}
                                 />

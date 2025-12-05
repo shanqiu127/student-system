@@ -212,7 +212,7 @@ public class StudentController {
                     .body(null);
         }
     }
-    // 辅助方法：获取单元格字符串值，处理不同类型的单元格
+    // 辅助方法:获取单元格字符串值,处理不同类型的单元格
     private static String getStringCell(Cell cell) {
         if (cell == null) return null;
         if (cell.getCellType() == CellType.STRING) return cell.getStringCellValue().trim();
@@ -224,7 +224,7 @@ public class StudentController {
             }
             return String.valueOf(v);
         }
-        cell.setCellType(CellType.STRING);
-        return cell.getStringCellValue().trim();
+        // 使用 DataFormatter 替代已弃用的 setCellType 方法
+        return new org.apache.poi.ss.usermodel.DataFormatter().formatCellValue(cell).trim();
     }
 }

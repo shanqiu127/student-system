@@ -68,10 +68,6 @@ export function removeToken() {
     clearToken();
 }
 
-export function saveUsername(username) {
-    if (!username) return;
-    localStorage.setItem(USERNAME_KEY, username);
-}
 // 获取用户名
 export function getUsername() {
     return localStorage.getItem(USERNAME_KEY);
