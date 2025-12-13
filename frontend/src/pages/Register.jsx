@@ -73,7 +73,6 @@ export default function Register() {
             });
             if (response.data.code === 0) {
                 toast.success('验证码已发送到您的邮箱,请在 5 分钟内完成验证');
-                setEmailCodeSent(true);
                 setCountdown(60); // 60秒倒计时
             } else {
                 toast.error(response.data.message || '验证码发送失败');

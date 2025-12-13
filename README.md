@@ -119,7 +119,7 @@
 ### 1️⃣ 克隆项目
 
 ```bash
-git clone https://github.com/your-username/student-system.git
+git clone https://github.com/shanqiu127/student-system.git
 cd student-system
 ```
 
@@ -129,7 +129,7 @@ cd student-system
 
 ```bash
 # 无需配置数据库，直接运行
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
 ```
 
 后端运行在：`http://localhost:8081`
