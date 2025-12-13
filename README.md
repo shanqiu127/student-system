@@ -58,13 +58,13 @@
 #### 📚 学生管理
 - ✅ 学生信息 CRUD 操作
 - ✅ 分页查询与按学号搜索
-- ✅ Excel 批量导入/导出
-- ✅ 数据隔离（用户独立数据）
+- ✅ Excel 批量导入
+- ✅ 用户独立数据
 - ✅ 学号唯一性校验
 
 #### 🔐 权限控制
-- ✅ 基于角色的访问控制（RBAC）
-- ✅ 管理员控制台（系统统计）
+- ✅ 基于角色的访问控制
+- ✅ 管理员控制台
 - ✅ 普通用户工作区
 - ✅ API 接口权限拦截
 
@@ -74,35 +74,6 @@
 - ✅ 简洁直观的界面
 
 ---
-
-## 🛠️ 技术架构
-
-### 后端技术栈
-
-| 技术 | 版本 | 说明 |
-|------|------|------|
-| Spring Boot | 3.5.7 | 核心框架 |
-| Spring Security | 6.x | 安全框架 |
-| Spring Data JPA | 3.x | 数据持久化 |
-| MySQL | 8.0 | 生产数据库 |
-| H2 Database | 2.x | 测试数据库 |
-| JWT (JJWT) | 0.11.5 | Token 生成与验证 |
-| Apache POI | 5.2.5 | Excel 处理 |
-| Spring Boot Mail | 3.x | 邮件服务 |
-| Lombok | 1.18.x | 代码简化 |
-| Maven | 3.6+ | 构建工具 |
-
-### 前端技术栈
-
-| 技术 | 版本 | 说明 |
-|------|------|------|
-| React | 18.2 | UI 框架 |
-| React Router | 6.14 | 路由管理 |
-| Axios | 1.5 | HTTP 客户端 |
-| Vite | 5.0 | 构建工具 |
-| Lucide React | 0.292 | 图标库 |
-| React Hot Toast | 2.4 | 通知组件 |
-
 
 ---
 
@@ -254,9 +225,6 @@ spring.mail.password=your_authorization_code
 ---
 
 
-
-
-
 ## 🐛 常见问题
 
 ### Q1: 启动后端报错 "Access denied for user"？
@@ -266,7 +234,7 @@ spring.mail.password=your_authorization_code
 **A**: 确认后端是否启动成功，检查 `src/services/api.js` 中的 `BASE_URL` 配置。
 
 ### Q3: 注册时收不到验证码？
-**A**: 需要在 `application.properties` 中配置邮件服务器信息。
+**A**: 需要在 `application.properties` 中配置你的邮件服务器信息。
 
 ### Q4: H2 数据库数据丢失？
 **A**: H2 是内存数据库，重启后数据会清空，生产环境请使用 MySQL。
@@ -275,30 +243,6 @@ spring.mail.password=your_authorization_code
 **A**: 生产环境已禁用自动创建，请参考后端文档手动创建管理员。
 
 ---
-
-
-## 🤝 贡献指南
-
-欢迎提交 Issue 和 Pull Request！
-
-1. Fork 本项目
-2. 创建新分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交修改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 提交 Pull Request
-
----
-
-## 📄 许可证
-
-MIT License - 本项目仅供学习交流使用
-
----
-
-## 📞 联系方式
-
-- 📧 Email: 3148338348@qq.com
-- 💬 Issue: [提交问题](https://github.com/shanqiu127/student-system/issues)
 
 ---
 
@@ -315,3 +259,4 @@ MIT License - 本项目仅供学习交流使用
 [⬆ 回到顶部](#-学生信息管理系统-student-information-system)
 
 </div>
+
