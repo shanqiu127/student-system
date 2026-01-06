@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X, Calendar } from 'lucide-react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 // StudentForm 组件：用于新建或编辑学生信息的表单弹窗
 // Props:
@@ -15,7 +17,6 @@ export default function StudentForm({ onSubmit, onCancel, initialStudent }) {
     const [className, setClassName] = useState('');
     const [address, setAddress] = useState('');
     const [errors, setErrors] = useState({}); // 表单错误
-    const [showDatePicker, setShowDatePicker] = useState(false);// 日期选择器
 
     // 编辑时，用 initialStudent 预填表单
     useEffect(() => {
@@ -82,14 +83,6 @@ export default function StudentForm({ onSubmit, onCancel, initialStudent }) {
         });
     }
 
-    // 快速选择年份
-    const currentYear = new Date().getFullYear();
-    const quickYears = [
-        { label: '2015年 (10岁)', year: 2015 },
-        { label: '2010年 (15岁)', year: 2010 },
-        { label: '2005年 (20岁)', year: 2005 },
-        { label: '2000年 (25岁)', year: 2000 },
-    ];
     // 渲染表单
     return (
         // 模态框
@@ -147,76 +140,32 @@ export default function StudentForm({ onSubmit, onCancel, initialStudent }) {
                             </select>
                         </div>
 
-                        <div className="form-field date-field">
+                        <div className="form-field">
                             <label>出生日期</label>
-                            <div className="date-input-wrapper">
-                                <input
-                                    type="date"
-                                    value={dob}
-                                    onChange={(e) => setDob(e.target.value)}
-                                    onWheel={(e) => {
-                                        // 高灵敏度滚轮：每次滚动增减1年，快速滚动时按月调整
-                                        e.preventDefault();
-                                        if (!dob) return;
-                                        const currentDate = new Date(dob);
-                                        
-                                        // 根据滚动速度动态调整：快速滚动=按年，慢速滚动=按月
-                                        const isQuickScroll = Math.abs(e.deltaY) > 50;
-                                        let delta;
-                                        
-                                        if (isQuickScroll) {
-                                            // 快速滚动：每次1年
-                                            delta = e.deltaY > 0 ? -365 : 365;
+                            <div className="date-picker-wrapper">
+                                <DatePicker
+                                    selected={dob ? new Date(dob) : null}
+                                    onChange={(date) => {
+                                        if (date) {
+                                            const year = date.getFullYear();
+                                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                                            const day = String(date.getDate()).padStart(2, '0');
+                                            setDob(`${year}-${month}-${day}`);
                                         } else {
-                                            // 慢速滚动：每次3个月
-                                            delta = e.deltaY > 0 ? -90 : 90;
-                                        }
-                                        
-                                        currentDate.setDate(currentDate.getDate() + delta);
-                                        const newDate = currentDate.toISOString().split('T')[0];
-                                        
-                                        // 限制在2000年到今天之间
-                                        const minDate = '2000-01-01';
-                                        const maxDate = new Date().toISOString().split('T')[0];
-                                        if (newDate >= minDate && newDate <= maxDate) {
-                                            setDob(newDate);
-                                        } else if (newDate < minDate) {
-                                            setDob(minDate); // 自动设置为最小值
-                                        } else if (newDate > maxDate) {
-                                            setDob(maxDate); // 自动设置为最大值
+                                            setDob('');
                                         }
                                     }}
-                                    // 最小可选日期: 2000年1月1日
-                                    min="2000-01-01"
-                                    // 最大可选日期: 当前日期今天
-                                    max={new Date().toISOString().split('T')[0]}
+                                    dateFormat="yyyy-MM-dd"
+                                    placeholderText="请选择出生日期"
+                                    minDate={new Date('2000-01-01')}
+                                    maxDate={new Date()}
+                                    showYearDropdown
+                                    showMonthDropdown
+                                    scrollableYearDropdown
+                                    scrollableMonthDropdown
+                                    yearDropdownItemNumber={30}
+                                    className="form-date-picker"
                                 />
-                                <button 
-                                    type="button" 
-                                    className="date-picker-btn"
-                                    onClick={() => setShowDatePicker(!showDatePicker)}
-                                >
-                                    <Calendar size={16} />
-                                </button>
-                                 {/*日期选择器 快速选择日期*/}
-                                {showDatePicker && (
-                                    <div className="quick-date-picker">
-                                        <div className="picker-header">快速选择</div>
-                                        {quickYears.map(item => (
-                                            <button
-                                                key={item.year}
-                                                type="button"
-                                                className="quick-year-btn"
-                                                onClick={() => {
-                                                    setDob(`${item.year}-01-01`);
-                                                    setShowDatePicker(false);
-                                                }}
-                                            >
-                                                {item.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
                             </div>
                             {errors.dob && <div className="field-error">{errors.dob}</div>}
                         </div>

@@ -3,8 +3,9 @@ import api from '../services/api';
 import { saveToken, clearToken, isAdmin } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { User, Lock } from 'lucide-react';
-// 简约风格登录页面
+import { User, Lock, GraduationCap } from 'lucide-react';
+
+// 专业商务风格登录页面
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -30,7 +31,7 @@ export default function Login() {
             }
             saveToken(token);  // 保存 token，会自动解析并保存用户名和角色
             toast.success(`登录成功，欢迎回来！`);
-            
+
             // 根据用户角色跳转到不同页面
             if (isAdmin()) {
                 navigate('/admin');  // 管理员跳转到独立的管理控制台
@@ -45,16 +46,29 @@ export default function Login() {
         }
     }
 
-    // 渲染简约登录表单
+    // 渲染专业商务风格登录表单
     return (
         <div className="login-root">
+            {/* 深色导航条 */}
+            <nav className="login-nav">
+                <div className="logo">
+                    <GraduationCap size={20} />
+                    <span>学生管理系统</span>
+                </div>
+                <div className="nav-links">
+                    <a href="/login" className="nav-link active">登录</a>
+                    <a href="/register" className="nav-link">注册</a>
+                </div>
+            </nav>
+
             <div className="login-wrapper">
-                <div className="glass-card">
+                <div className="login-card">
                     <div className="logo-area">
                         <div className="logo-icon">🎓</div>
-                        <h1 className="app-title">学生管理系统</h1>
+                        <h1 className="app-title">欢迎登录</h1>
+                        <p className="app-subtitle">请输入您的账号信息</p>
                     </div>
-                    {/*用户名区域*/}
+                    {/* 用户名区域 */}
                     <form onSubmit={doLogin}>
                         <div className="form-item">
                             <div className="custom-input">
@@ -68,7 +82,7 @@ export default function Login() {
                                 />
                             </div>
                         </div>
-                        {/*密码区域*/}
+                        {/* 密码区域 */}
                         <div className="form-item">
                             <div className="custom-input">
                                 <Lock className="input-icon" size={18} />
@@ -86,7 +100,7 @@ export default function Login() {
                             {isLoading ? '登录中...' : '登录'}
                         </button>
                     </form>
-                    {/*底部区域*/}
+                    {/* 底部区域 */}
                     <div className="login-footer">
                         <span className="link-text" onClick={() => navigate('/register')}>注册账号</span>
                         <span className="link-separator">·</span>

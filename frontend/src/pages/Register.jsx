@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { User, Lock, ArrowLeft, Mail, Shield } from 'lucide-react';
+import { User, Lock, ArrowLeft, Mail, Shield, GraduationCap } from 'lucide-react';
 import { generateCaptchaCode, drawCaptcha, verifyCaptcha } from '../utils/captcha';
 
-// 简约风格注册页面
+// 专业商务风格注册页面
 export default function Register() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -202,11 +202,23 @@ export default function Register() {
         }
     }
 
-    // 渲染简约注册表单
+    // 渲染专业商务风格注册表单
     return (
         <div className="login-root">
+            {/* 深色导航条 */}
+            <nav className="login-nav">
+                <div className="logo">
+                    <GraduationCap size={20} />
+                    <span>学生管理系统</span>
+                </div>
+                <div className="nav-links">
+                    <a href="/login" className="nav-link">登录</a>
+                    <a href="/register" className="nav-link active">注册</a>
+                </div>
+            </nav>
+
             <div className="login-wrapper">
-                <div className="glass-card">
+                <div className="login-card">
                     {/* 返回按钮 */}
                     <div className="back-to-login" onClick={() => navigate('/login')}>
                         <ArrowLeft size={16} />
@@ -217,6 +229,7 @@ export default function Register() {
                     <div className="logo-area">
                         <div className="logo-icon">🎓</div>
                         <h1 className="app-title">注册新账号</h1>
+                        <p className="app-subtitle">创建您的学生管理系统账号</p>
                     </div>
 
                     {/* 表单 */}

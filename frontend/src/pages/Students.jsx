@@ -12,7 +12,8 @@ import {
     GraduationCap,
     ArrowDown,
     Plus,
-    Trash2
+    Trash2,
+    Inbox
 } from 'lucide-react';
 import { clearToken, getUsername } from '../utils/auth';
 import { useNavigate } from 'react-router-dom';
@@ -445,14 +446,43 @@ export default function Students() {
                             <tbody>
                                 {loading ? (
                                     <tr>
-                                        <td colSpan="10" className="loading-cell">
-                                            加载中...
+                                        <td colSpan="10">
+                                            <div className="table-skeleton">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <div key={i} className="skeleton-row">
+                                                        <div className="skeleton-cell" style={{ width: '30px' }} />
+                                                        <div className="skeleton-cell" style={{ width: '100px' }} />
+                                                        <div className="skeleton-cell" style={{ width: '80px' }} />
+                                                        <div className="skeleton-cell" style={{ width: '50px' }} />
+                                                        <div className="skeleton-cell" style={{ width: '100px' }} />
+                                                        <div className="skeleton-cell" style={{ width: '80px' }} />
+                                                        <div className="skeleton-cell" style={{ width: '110px' }} />
+                                                        <div className="skeleton-cell" style={{ flex: 1 }} />
+                                                        <div className="skeleton-cell" style={{ width: '50px' }} />
+                                                        <div className="skeleton-cell" style={{ width: '100px' }} />
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </td>
                                     </tr>
                                 ) : students.length === 0 ? (
                                     <tr>
-                                        <td colSpan="10" className="empty-cell">
-                                            暂无数据
+                                        <td colSpan="10">
+                                            <div className="empty-state">
+                                                <div className="empty-state-icon">
+                                                    <Inbox size={32} />
+                                                </div>
+                                                <div className="empty-state-title">暂无学生数据</div>
+                                                <div className="empty-state-desc">
+                                                    {keyword ? '未找到匹配的学生信息' : '还没有添加任何学生'}
+                                                </div>
+                                                {!keyword && (
+                                                    <div className="empty-state-action" onClick={openCreateForm}>
+                                                        <Plus size={16} />
+                                                        立即添加第一个学生
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ) : (
@@ -482,12 +512,14 @@ export default function Students() {
                                                 <span className="status-tag active">在读</span>
                                             </td>
                                             <td>
-                                                <button className="link-btn primary" onClick={() => openEditForm(s)}>
-                                                    编辑
-                                                </button>
-                                                <button className="link-btn danger" onClick={() => deleteStudent(s.id)}>
-                                                    删除
-                                                </button>
+                                                <div className="action-buttons">
+                                                    <button className="link-btn primary" onClick={() => openEditForm(s)}>
+                                                        编辑
+                                                    </button>
+                                                    <button className="link-btn danger" onClick={() => deleteStudent(s.id)}>
+                                                        删除
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))

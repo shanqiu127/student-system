@@ -18,30 +18,6 @@
 
 这是一个完整的前后端分离学生管理系统，采用现代化的技术栈和架构设计，实现了用户认证、学生信息管理、数据隔离、角色权限控制等核心功能。项目适合作为学习 Spring Boot + React 全栈开发的实战案例。
 
-### ✨ 为什么选择这个项目？
-
-- 🏗️ **完整的前后端分离架构**：前端 React + 后端 Spring Boot，职责清晰
-- 🔐 **企业级安全方案**：JWT + Spring Security，邮箱验证码注册
-- 🎨 **现代化 UI 设计**：简约紫色风格，响应式布局
-- 📊 **数据隔离设计**：多用户独立数据管理，保证数据安全
-- 🔑 **角色权限控制**：管理员与普通用户权限分离
-- 📦 **开箱即用**：详细的配置文档，快速启动项目
-
----
-## 📸 截图预览
-
-### 登录页面
-![alt text](image.png)
-
-### 注册页面
-![alt text](image-1.png)
-
-### 学生管理页面
-![alt text](image-3.png)
-
-### 管理员控制台
-![alt text](image-2.png)
-
 ---
 
 ## 🎯 功能特性
@@ -77,6 +53,7 @@
 
 ---
 
+
 ## 🚀 快速开始
 
 ### 环境要求
@@ -87,59 +64,107 @@
 - 📦 **Node.js**: 16+
 - 🎨 **npm**: 8+
 
-### 1️⃣ 克隆项目
+### 1克隆项目
 
 ```bash
 git clone https://github.com/shanqiu127/student-system.git
 cd student-system
 ```
 
-### 2️⃣ 后端启动
+### 2 创建配置文件
+### 📌 application-dev.properties（测试环境）
+
+**适用场景**：快速体验、开发测试
+
+**关键配置项**：
+```properties
+# 服务端口
+server.port=8081
+
+# H2 内存数据库（无需配置）
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.username=sa
+spring.datasource.password=
+
+# H2 控制台（可选）
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+# JPA 配置
+spring.jpa.hibernate.ddl-auto=create-drop  # 每次启动重建表
+spring.jpa.show-sql=true
+
+# JWT 配置（与生产环境相同）
+app.jwt.secret=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+app.jwt.expiration=86400000
+
+# 邮件配置
+spring.mail.host=smtp.qq.com
+spring.mail.port=465
+spring.mail.username=your_email@qq.com
+spring.mail.password=your_auth_code
+
+```
+### 📌 application.properties（生产环境）
+
+**适用场景**：正式部署、数据持久化
+
+**关键配置项**：
+```properties
+# 服务端口
+server.port=8080
+
+# MySQL 数据库配置（需修改为你的实际配置）
+spring.datasource.url=jdbc:mysql://localhost:3306/sis_db?useSSL=false&serverTimezone=Asia/Shanghai
+spring.datasource.username=root
+spring.datasource.password=your_password
+
+# JPA 配置
+spring.jpa.hibernate.ddl-auto=update    # 自动更新表结构
+spring.jpa.show-sql=true                # 显示 SQL 语句
+
+# JWT 配置
+app.jwt.secret=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+app.jwt.expiration=86400000             # Token 有效期 24 小时
+
+# 邮件配置（QQ 邮箱）
+spring.mail.qq.host=smtp.qq.com
+spring.mail.qq.port=465
+spring.mail.qq.username=your_email@qq.com
+spring.mail.qq.password=your_qq_auth_code
+
+# 邮件配置（网易邮箱）
+spring.mail.netease.host=smtp.163.com
+spring.mail.netease.port=465
+spring.mail.netease.username=your_email@163.com
+spring.mail.netease.password=your_netease_auth_code
+```
+
+```
+### 3 后端启动
 
 #### 方式一：使用 H2 测试环境（推荐新手）
-
+```
 ```bash
 # 无需配置数据库，直接运行
 mvn spring-boot:run "-Dspring-boot.run.profiles=dev"
 ```
 
-后端运行在：`http://localhost:8081`
-
 #### 方式二：使用 MySQL 生产环境
 
-**① 创建数据库**
+**创建数据库**
 ```sql
 CREATE DATABASE sis_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-**② 配置数据库连接**
-
-编辑 `src/main/resources/application.properties`：
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/sis_db
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-```
-
-**③ 配置邮件服务（可选）**
-```properties
-spring.mail.host=smtp.qq.com
-spring.mail.port=587
-spring.mail.username=your_email@qq.com
-spring.mail.password=your_authorization_code
-```
-
-**④ 启动后端**
 ```bash
 mvn spring-boot:run
 ```
 
-后端运行在：`http://localhost:8080`
-
-### 3️⃣ 前端启动
+### 4 前端启动
 
 ```bash
-cd frontend
+cd student-system\frontend
 
 # 安装依赖
 npm install
@@ -147,8 +172,6 @@ npm install
 # 启动开发服务器
 npm run dev
 ```
-
-前端运行在：`http://localhost:3000`
 
 ### 4️⃣ 访问系统
 
@@ -162,89 +185,68 @@ npm run dev
 #### 访问地址
 
 - 🌐 前端界面：http://localhost:3000
-- 🔌 后端 API：http://localhost:8080（MySQL）或 http://localhost:8081（H2）
-- 🗄️ H2 控制台：http://localhost:8081/h2-console（测试环境）
 
 ---
 
 
 
-## 🎓 学习要点
+---
 
-通过这个项目，你可以学习到：
+### 🔑 邮件服务配置指南
 
-### 后端部分
-- ✅ Spring Boot 3.x 项目搭建与配置
-- ✅ Spring Security + JWT 认证实现
-- ✅ Spring Data JPA 数据持久化
-- ✅ RESTful API 设计规范
-- ✅ 全局异常处理
-- ✅ 数据隔离与权限控制
-- ✅ 邮件发送与验证码机制
-- ✅ Excel 文件处理
+#### QQ 邮箱获取授权码
+1. 登录 QQ 邮箱 → 设置 → 账户
+2. 开启 POP3/SMTP 服务
+3. 生成授权码（非登录密码）
+4. 将授权码填入配置文件的 `spring.mail.qq.password`
 
-### 前端部分
-- ✅ React 18 Hooks 开发
-- ✅ React Router 6 路由配置
-- ✅ Axios 拦截器与 Token 管理
-- ✅ JWT 解析与角色判断
-- ✅ 表单验证与错误处理
-- ✅ 文件上传与下载
-- ✅ 响应式布局设计
+#### 网易邮箱获取授权码
+1. 登录网易邮箱 → 设置 → POP3/SMTP/IMAP
+2. 开启 SMTP 服务
+3. 获取授权码
+4. 将授权码填入配置文件的 `spring.mail.netease.password`
 
 ---
 
-## 🔧 配置说明
+### ⚠️ 配置注意事项
 
-### 双配置文件设计
+1. **数据库密码**：生产环境需修改 `application.properties` 中的数据库密码
+2. **邮件配置**：注册功能需要邮箱验证码，必须配置邮件服务
+3. **JWT Secret**：生产环境建议更换为随机生成的复杂密钥
+4. **H2 数据**：测试环境数据在内存中，重启后会清空
 
-项目支持多环境配置，方便开发与部署：
+---
+## 📁 项目结构
 
-| 配置文件 | 环境 | 数据库 | 端口 | 说明 |
-|---------|------|--------|------|------|
-| `application.properties` | 生产 | MySQL | 8080 | 需手动配置数据库 |
-| `application-dev.properties` | 测试 | H2 | 8081 | 内存数据库，自动初始化 |
-
-### 关键配置项
-
-```properties
-# JWT 配置
-jwt.secret=your_secret_key_here
-jwt.expiration=86400000  # 24小时
-
-# 管理员自动创建（仅测试环境启用）
-app.init.enabled=true
-
-# 邮件配置
-spring.mail.host=smtp.qq.com
-spring.mail.port=587
-spring.mail.username=your_email@qq.com
-spring.mail.password=your_authorization_code
+```
+student-system/
+├── frontend/                    # 前端项目
+│   ├── src/
+│   │   ├── pages/              # 页面组件（Login、Register、Students 等）
+│   │   ├── components/         # 可复用组件
+│   │   ├── services/           # API 服务封装
+│   │   ├── utils/              # 工具函数（auth、captcha 等）
+│   │   └── main.jsx            # 应用入口
+│   ├── package.json
+│   └── vite.config.js
+├── src/main/java/com/example/studentsystem/
+│   ├── controller/             # REST 控制器
+│   ├── service/                # 业务逻辑层
+│   ├── repository/             # 数据访问层
+│   ├── model/                  # 实体类
+│   ├── dto/                    # 数据传输对象
+│   ├── security/               # 安全相关（JWT、过滤器）
+│   ├── exception/              # 异常处理
+│   └── StudentSystemApplication.java  # 应用入口
+├── src/main/resources/
+│   ├── application.properties          # MySQL 生产配置
+│   └── application-dev.properties      # H2 测试配置
+├── pom.xml                     # Maven 配置
+└── target/                     # 构建输出
 ```
 
 ---
-
-
-## 🐛 常见问题
-
-### Q1: 启动后端报错 "Access denied for user"？
-**A**: 检查 `application.properties` 中的数据库用户名和密码是否正确。
-
-### Q2: 前端无法连接后端接口？
-**A**: 确认后端是否启动成功，检查 `src/services/api.js` 中的 `BASE_URL` 配置。
-
-### Q3: 注册时收不到验证码？
-**A**: 需要在 `application.properties` 中配置你的邮件服务器信息。
-
-### Q4: H2 数据库数据丢失？
-**A**: H2 是内存数据库，重启后数据会清空，生产环境请使用 MySQL。
-
-### Q5: 管理员账户在 MySQL 环境下不存在？
-**A**: 生产环境已禁用自动创建，请参考后端文档手动创建管理员。
-
----
-
----
+--
 
 ## ⭐ Star History
 

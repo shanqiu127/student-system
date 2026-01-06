@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Users, GraduationCap, UserCheck, Shield, ArrowDown } from 'lucide-react';
+import { Users, GraduationCap, UserCheck, Shield, ArrowDown, AlertCircle } from 'lucide-react';
 import api from '../services/api';
 import { getToken, removeToken, getUsername } from '../utils/auth';
 
@@ -74,45 +74,51 @@ function AdminDashboard() {
             <div className="main-container">
                 <div className="content-card">
                     <h2>系统概览</h2>
-                    
+
                     {loading ? (
-                        <div className="loading-state">加载中...</div>
+                        <div className="stats-loading">
+                            <div className="stats-spinner"></div>
+                            <span>加载统计数据中...</span>
+                        </div>
                     ) : stats ? (
                         <div className="stats-grid">
-                             {/*总用户统计信息*/}
-                            <div className="stat-card">
-                                <div className="stat-icon users">
-                                    <Users size={32} />
+                            {/* 主要卡片 - 总用户数 */}
+                            <div className="stat-card primary">
+                                <div className="stat-icon">
+                                    <Users size={28} />
                                 </div>
                                 <div className="stat-content">
                                     <div className="stat-label">总用户数</div>
                                     <div className="stat-value">{stats.totalUsers}</div>
                                 </div>
                             </div>
-                            {/*普通用户区域*/}
-                            <div className="stat-card">
-                                <div className="stat-icon normal">
-                                    <UserCheck size={32} />
+
+                            {/* 次要卡片 - 普通用户 */}
+                            <div className="stat-card secondary users">
+                                <div className="stat-icon">
+                                    <UserCheck size={24} />
                                 </div>
                                 <div className="stat-content">
                                     <div className="stat-label">普通用户</div>
                                     <div className="stat-value">{stats.normalUsers}</div>
                                 </div>
                             </div>
-                            {/*管理员信息*/}
-                            <div className="stat-card">
-                                <div className="stat-icon admin">
-                                    <Shield size={32} />
+
+                            {/* 次要卡片 - 管理员 */}
+                            <div className="stat-card secondary admin">
+                                <div className="stat-icon">
+                                    <Shield size={24} />
                                 </div>
                                 <div className="stat-content">
                                     <div className="stat-label">管理员</div>
                                     <div className="stat-value">{stats.adminUsers}</div>
                                 </div>
                             </div>
-                             {/*学生信息区域*/}
-                            <div className="stat-card">
-                                <div className="stat-icon students">
-                                    <GraduationCap size={32} />
+
+                            {/* 次要卡片 - 学生记录 */}
+                            <div className="stat-card secondary students">
+                                <div className="stat-icon">
+                                    <GraduationCap size={24} />
                                 </div>
                                 <div className="stat-content">
                                     <div className="stat-label">学生记录数</div>
@@ -121,94 +127,15 @@ function AdminDashboard() {
                             </div>
                         </div>
                     ) : (
-                        <div className="error-state">加载失败，请刷新页面</div>
+                        <div className="stats-error">
+                            <div className="stats-error-icon">
+                                <AlertCircle size={24} />
+                            </div>
+                            <div>加载失败，请刷新页面重试</div>
+                        </div>
                     )}
                 </div>
             </div>
-
-            <style>{`
-                .admin-dashboard {
-                    min-height: 100vh;
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                }
-
-                .stats-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                    gap: 24px;
-                    margin: 32px 0;
-                }
-
-                .stat-card {
-                    background: white;
-                    border-radius: 12px;
-                    padding: 24px;
-                    display: flex;
-                    align-items: center;
-                    gap: 16px;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                    transition: transform 0.2s, box-shadow 0.2s;
-                }
-
-                .stat-card:hover {
-                    transform: translateY(-4px);
-                    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-                }
-
-                .stat-icon {
-                    width: 64px;
-                    height: 64px;
-                    border-radius: 12px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                }
-
-                .stat-icon.users {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                }
-
-                .stat-icon.normal {
-                    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-                }
-
-                .stat-icon.admin {
-                    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-                }
-
-                .stat-icon.students {
-                    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-                }
-
-                .stat-content {
-                    flex: 1;
-                }
-
-                .stat-label {
-                    font-size: 14px;
-                    color: #666;
-                    margin-bottom: 8px;
-                }
-
-                .stat-value {
-                    font-size: 32px;
-                    font-weight: bold;
-                    color: #333;
-                }
-
-                .loading-state,
-                .error-state {
-                    text-align: center;
-                    padding: 48px;
-                    color: #666;
-                    font-size: 16px;
-                }
-
-                .error-state {
-                    color: #e53e3e;
-                }
-            `}</style>
         </div>
     );
 }

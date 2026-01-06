@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Mail, Lock, Shield, Send, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Shield, Send, ArrowLeft, GraduationCap } from 'lucide-react';
 
-// 重置密码页面组件
+// 专业商务风格重置密码页面
 export default function ResetPassword() {
     const [email, setEmail] = useState(''); // 完整邮箱地址
     const [emailCode, setEmailCode] = useState(''); // 邮箱验证码
@@ -140,12 +140,20 @@ export default function ResetPassword() {
 
     return (
         <div className="login-root">
-            {/* 氛围光效 */}
-            <div className="ambient-light" />
-            <div className="ambient-light-2" />
+            {/* 深色导航条 */}
+            <nav className="login-nav">
+                <div className="logo">
+                    <GraduationCap size={20} />
+                    <span>学生管理系统</span>
+                </div>
+                <div className="nav-links">
+                    <a href="/login" className="nav-link">登录</a>
+                    <a href="/register" className="nav-link">注册</a>
+                </div>
+            </nav>
 
             <div className="login-wrapper">
-                <div className="glass-card">
+                <div className="login-card">
                     {/* 返回登录按钮 */}
                     <div className="back-to-login" onClick={() => navigate('/login')}>
                         <ArrowLeft size={16} />
@@ -155,8 +163,8 @@ export default function ResetPassword() {
                     {/* Logo 区域 */}
                     <div className="logo-area">
                         <div className="logo-icon">🔐</div>
-                        <div className="app-title">重置密码</div>
-                        <div className="app-subtitle">通过邮箱验证重置您的密码</div>
+                        <h1 className="app-title">重置密码</h1>
+                        <p className="app-subtitle">通过邮箱验证重置您的密码</p>
                     </div>
 
                     {/* 重置密码表单 */}
@@ -256,8 +264,8 @@ export default function ResetPassword() {
 
                     {/* 底部提示 */}
                     <div className="login-footer">
-                        <p className="security-tips">
-                            <Shield size={12} style={{ display: 'inline', marginRight: '4px' }} />
+                        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-tertiary)' }}>
+                            <Shield size={12} style={{ display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
                             请确保邮箱地址为您注册时使用的邮箱
                         </p>
                     </div>

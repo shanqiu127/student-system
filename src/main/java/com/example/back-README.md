@@ -108,7 +108,7 @@ spring.jpa.hibernate.ddl-auto=update
 ```
 
 #### 2. H2 测试环境
-配置文件：`application-dev.properties`（已配置好，无需修改）
+配置文件：`application-dev.properties`
 
 ### 邮件服务配置
 
@@ -224,10 +224,8 @@ public class Student {
 }
 ```
 
-所有学生操作都基于当前登录用户进行过滤：
-```java
-repo.findByUserAndStudentNo(user, studentNo);
-```
+
+
 
 ### JWT 角色信息
 JWT Token 中包含角色信息，便于前端进行权限判断：
